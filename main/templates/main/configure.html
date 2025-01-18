@@ -1,0 +1,184 @@
+{% extends 'base-admin.html' %}
+
+{% block content-header %}
+<div class="row mb-2">
+  <div class="col-sm-6">
+    <h1 class="m-0">Configuration</h1>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-outline card-danger">
+  <div class="card-header">
+    <h1 class="card-title">Manage Batches</h1>
+    <button class="btn btn-sm btn-success float-right" data-toggle="modal" data-target="#addBatchModal">
+      <i class="fas fa-plus"></i> Add Batch
+    </button>
+  </div>
+  <div class="card-body">
+    <table id="batchTable" class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>From Year</th>
+          <th>To Year</th>
+          <th>Batch Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for batch in batches %}
+        <tr>
+          <td>{{ batch.id }}</td>
+          <td>{{ batch.from_year }}</td>
+          <td>{{ batch.to_year }}</td>
+          <td>{{ batch.batch_type }}</td>
+          <td>
+            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewBatchModal" 
+                    data-id="{{ batch.id }}" data-from="{{ batch.from_year }}" 
+                    data-to="{{ batch.to_year }}" data-type="{{ batch.batch_type }}">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateBatchModal" 
+                    data-id="{{ batch.id }}" data-from="{{ batch.from_year }}" 
+                    data-to="{{ batch.to_year }}" data-type="{{ batch.batch_type }}">
+              <i class="fas fa-edit"></i> Update
+            </button>
+            <button class="btn btn-danger btn-sm">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Batch Modal -->
+<div class="modal fade" id="addBatchModal" tabindex="-1" role="dialog" aria-labelledby="addBatchModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addBatchModalLabel">Add Batch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="{% url 'configure' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="fromYear">From Year</label>
+            <input type="text" name="from_year" class="form-control year-input" id="fromYear" placeholder="Enter start year" required>
+          </div>
+          <div class="form-group">
+            <label for="toYear">To Year</label>
+            <input type="text" name="to_year" class="form-control year-input" id="toYear" placeholder="Enter end year" required>
+          </div>
+          <div class="form-group">
+            <label for="batchType">Batch Type</label>
+            <input type="text" name="batch_type" class="form-control" id="batchType" placeholder="Enter batch type" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success">Add Batch</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Update Batch Modal -->
+<div class="modal fade" id="updateBatchModal" tabindex="-1" role="dialog" aria-labelledby="updateBatchModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateBatchModalLabel">Update Batch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="updateFromYear">From Year</label>
+            <input type="text" name="from_year" class="form-control year-input" id="updateFromYear" placeholder="Enter start year" required>
+          </div>
+          <div class="form-group">
+            <label for="updateToYear">To Year</label>
+            <input type="text" name="to_year" class="form-control year-input" id="updateToYear" placeholder="Enter end year" required>
+          </div>
+          <div class="form-group">
+            <label for="updateBatchType">Batch Type</label>
+            <input type="text" name="batch_type" class="form-control" id="updateBatchType" placeholder="Enter batch type" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update Batch</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- View Batch Modal -->
+<div class="modal fade" id="viewBatchModal" tabindex="-1" role="dialog" aria-labelledby="viewBatchModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewBatchModalLabel">View Batch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><strong>ID:</strong> <span id="viewBatchId"></span></p>
+        <p><strong>From Year:</strong> <span id="viewFromYear"></span></p>
+        <p><strong>To Year:</strong> <span id="viewToYear"></span></p>
+        <p><strong>Batch Type:</strong> <span id="viewBatchType"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include 'includes/foot.html' %}
+
+<script>
+  $(document).ready(function () {
+    $('#batchTable').DataTable({ responsive: true, autoWidth: false });
+    $('.year-input').on('input', function () { this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4); });
+    $('#updateBatchModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var fromYear = button.data('from');
+      var toYear = button.data('to');
+      var type = button.data('type');
+      var modal = $(this);
+      modal.find('form').attr('action', `/update-batch/${id}/`);
+      modal.find('#updateFromYear').val(fromYear);
+      modal.find('#updateToYear').val(toYear);
+      modal.find('#updateBatchType').val(type);
+    });
+    $('#viewBatchModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var fromYear = button.data('from');
+      var toYear = button.data('to');
+      var type = button.data('type');
+      var modal = $(this);
+      modal.find('#viewBatchId').text(id);
+      modal.find('#viewFromYear').text(fromYear);
+      modal.find('#viewToYear').text(toYear);
+      modal.find('#viewBatchType').text(type);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #28a745;">
+  <!-- Brand Logo -->
+  <a href="#" class="brand-link" style="background-color: #218838;">
+      <span class="brand-text font-weight-light" style="color: black;">EYEARBOOK</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user panel -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <img src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+      </div>
+      <div class="info">
+        <a href="#" class="d-block" style="color: black;">Alexander Pierce</a>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+        <li class="nav-item">
+          <a href="/dashboard" class="nav-link" id="dashboard">
+            <i class="nav-icon fas fa-book"></i>
+            <p style="color: black;">Dashboard</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/yearbook" class="nav-link" id="yearbook">
+            <i class="nav-icon fas fa-book"></i>
+            <p style="color: black;">Yearbook</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/transaction" class="nav-link" id="transaction">
+            <i class="nav-icon fas fa-exchange-alt"></i>
+            <p style="color: black;">Transaction</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/configure" class="nav-link" id="configure">
+            <i class="nav-icon fas fa-cogs"></i>
+            <p style="color: black;">Configure</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/accounts" class="nav-link" id="accounts">
+            <i class="nav-icon fas fa-users"></i>
+            <p style="color: black;">Accounts</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/records" class="nav-link" id="records">
+            <i class="nav-icon fas fa-folder"></i>
+            <p style="color: black;">Records</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/logs" class="nav-link" id="logs">
+            <i class="nav-icon fas fa-clipboard-list"></i>
+            <p style="color: black;">Logs</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/analytics" class="nav-link" id="analytics">
+            <i class="nav-icon fas fa-chart-bar"></i>
+            <p style="color: black;">Analytics</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const currentPath = window.location.pathname.replace(/\/$/, ""); // Remove trailing slash
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    navLinks.forEach(link => {
+      const linkPath = link.getAttribute("href").replace(/\/$/, ""); // Remove trailing slash for comparison
+      if (linkPath === currentPath) {
+        link.classList.add("active");
+      }
+    });
+  });
+</script>
