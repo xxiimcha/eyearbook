@@ -18,3 +18,25 @@ class GraduateForm(forms.ModelForm):
             'first_name', 'middle_name', 'last_name', 'course',
             'email', 'contact', 'address', 'photo', 'batch'
         ]
+
+    def __init__(self, *args, **kwargs):
+        exclude_batch = kwargs.pop('exclude_batch', False)  # Extract the custom argument
+        super().__init__(*args, **kwargs)
+        if exclude_batch:
+            self.fields.pop('batch')  # Remove the 'batch' field dynamically
+
+class GraduateAddForm(forms.ModelForm):
+    class Meta:
+        model = Graduate
+        fields = [
+            'first_name', 'middle_name', 'last_name', 'course',
+            'email', 'contact', 'address', 'photo', 'batch'
+        ]
+
+class GraduateEditForm(forms.ModelForm):
+    class Meta:
+        model = Graduate
+        fields = [
+            'first_name', 'middle_name', 'last_name', 'course',
+            'email', 'contact', 'address', 'photo'
+        ]

@@ -5,19 +5,28 @@
   <div class="col-sm-6">
     <h1 class="m-0">Graduate List</h1>
   </div>
+  <div class="col-sm-6 text-right">
+    {% if batch_id %}
+        <a href="{% url 'configure' %}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="card card-outline card-primary">
   <div class="card-header">
-    <h3 class="card-title">Graduates</h3>
+    <h3 class="card-title"></h3>
     {% if batch_id %}
+        <p class="mb-0">
+            Batch<strong> {{ batch.to_year }}</strong> | <strong>{{ batch.batch_type }}</strong>
+        </p>
         <a href="{% url 'add_graduate' batch_id=batch_id %}" class="btn btn-sm btn-success float-right">
             <i class="fas fa-plus"></i> Add Graduate
         </a>
     {% endif %}
-
   </div>
   <div class="card-body">
     <table id="graduateTable" class="table table-bordered table-striped">
@@ -26,7 +35,6 @@
           <th>ID</th>
           <th>Name</th>
           <th>Course</th>
-          <th>Batch Type</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -36,11 +44,17 @@
           <td>{{ graduate.id }}</td>
           <td>{{ graduate.first_name }} {{ graduate.last_name }}</td>
           <td>{{ graduate.course }}</td>
-          <td>{{ graduate.batch_type }}</td>
           <td>
+            <!-- View Button -->
+            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewModal" 
+                    onclick="viewGraduate('{{ graduate.id }}', '{{ graduate.first_name }}', '{{ graduate.middle_name }}', '{{ graduate.last_name }}', '{{ graduate.course }}', '{{ graduate.email }}', '{{ graduate.contact }}', '{{ graduate.address }}', '{{ graduate.photo.url }}', 'Batch: {{ graduate.batch.from_year }} - {{ graduate.batch.to_year }} ({{ graduate.batch.batch_type }})')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <!-- Edit Button -->
             <a href="{% url 'edit_graduate' graduate.id %}" class="btn btn-primary btn-sm">
               <i class="fas fa-edit"></i> Edit
             </a>
+            <!-- Delete Button -->
             <a href="{% url 'delete_graduate' graduate.id %}" class="btn btn-danger btn-sm">
               <i class="fas fa-trash"></i> Delete
             </a>
@@ -52,9 +66,62 @@
   </div>
 </div>
 
+<!-- View Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="viewModalLabel">Graduate Yearbook Profile</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- Profile Picture -->
+          <div class="col-md-4 text-center">
+            <div class="profile-picture-wrapper">
+                <img id="modalGraduatePhoto" src="{{ graduate.photo.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="border: 5px solid #007bff; max-height: 200px;">
+            </div>
+          </div>
+          <!-- Graduate Details -->
+          <div class="col-md-8">
+            <h2 id="modalGraduateName" class="text-primary font-weight-bold text-center"></h2>
+            <p class="text-muted text-center">Batch: <span id="modalGraduateBatch"></span></p>
+            <hr>
+            <div class="graduate-details">
+              <p><strong>Course:</strong> <span id="modalGraduateCourse"></span></p>
+              <p><strong>Email:</strong> <span id="modalGraduateEmail"></span></p>
+              <p><strong>Contact:</strong> <span id="modalGraduateContact"></span></p>
+              <p><strong>Address:</strong> <span id="modalGraduateAddress"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include 'includes/foot.html' %}
 <script>
   $(document).ready(function () {
-    $('#graduateTable').DataTable({ responsive: true, autoWidth: false });
+    $('#graduateTable').DataTable({
+      responsive: true,
+      autoWidth: false
+    });
   });
+
+  function viewGraduate(id, firstName, middleName, lastName, course, email, contact, address, photoUrl, batchDetails) {
+    $('#modalGraduateName').text(`${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`);
+    $('#modalGraduateCourse').text(course);
+    $('#modalGraduateEmail').text(email);
+    $('#modalGraduateContact').text(contact);
+    $('#modalGraduateAddress').text(address);
+    $('#modalGraduateBatch').text(batchDetails);
+    $('#modalGraduatePhoto').attr('src', photoUrl || 'https://via.placeholder.com/200');
+  }
 </script>
 {% endblock %}

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Batch, Graduate
-from .forms import BatchForm
+from .forms import BatchForm, GraduateForm, GraduateEditForm
+from django.contrib import messages
 
 def login_view(request):
     if request.method == 'POST':
@@ -43,11 +44,13 @@ def update_batch(request, batch_id):
 
 def graduate_list(request, batch_id=None):
     if batch_id:
-        graduates = Graduate.objects.filter(batch__id=batch_id) 
+        graduates = Graduate.objects.filter(batch__id=batch_id)
+        batch = get_object_or_404(Batch, id=batch_id)  # Fetch the batch details
     else:
         graduates = Graduate.objects.all()
+        batch = None
 
-    return render(request, 'main/graduates/graduate_list.html', {'graduates': graduates, 'batch_id': batch_id})
+    return render(request, 'main/graduates/graduate_list.html', {'graduates': graduates, 'batch_id': batch_id, 'batch': batch})
 
 def add_graduate(request, batch_id):
     # Ensure the batch exists
@@ -74,22 +77,17 @@ def add_graduate(request, batch_id):
 
 def edit_graduate(request, pk):
     graduate = get_object_or_404(Graduate, pk=pk)
+
     if request.method == 'POST':
-        graduate.first_name = request.POST['first_name']
-        graduate.middle_name = request.POST.get('middle_name', '')
-        graduate.last_name = request.POST['last_name']
-        graduate.course = request.POST['course']
-        graduate.school_year = request.POST['school_year']
-        graduate.email = request.POST['email']
-        graduate.contact = request.POST['contact']
-        graduate.address = request.POST['address']
-        graduate.batch_type = request.POST['batch_type']
-        if 'photo' in request.FILES:
-            graduate.photo = request.FILES['photo']
-        graduate.save()
-        messages.success(request, "Graduate updated successfully!")
-        return redirect('graduate_list')
-    return render(request, 'graduates/edit_graduate.html', {'graduate': graduate})
+        form = GraduateForm(request.POST, request.FILES, instance=graduate, exclude_batch=True)
+        if form.is_valid():
+            form.save()
+            return redirect('batch_graduates', batch_id=graduate.batch.id)
+    else:
+        form = GraduateForm(instance=graduate, exclude_batch=True)
+
+    return render(request, 'main/graduates/edit_graduate.html', {'form': form, 'graduate': graduate})
+
 
 def delete_graduate(request, pk):
     graduate = get_object_or_404(Graduate, pk=pk)
