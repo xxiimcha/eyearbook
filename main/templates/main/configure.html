@@ -35,11 +35,9 @@
           <td>{{ batch.to_year }}</td>
           <td>{{ batch.batch_type }}</td>
           <td>
-            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewBatchModal" 
-                    data-id="{{ batch.id }}" data-from="{{ batch.from_year }}" 
-                    data-to="{{ batch.to_year }}" data-type="{{ batch.batch_type }}">
+            <a class="btn btn-info btn-sm" href="{% url 'batch_graduates' batch.id %}">
               <i class="fas fa-eye"></i> View
-            </button>
+            </a>            
             <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateBatchModal" 
                     data-id="{{ batch.id }}" data-from="{{ batch.from_year }}" 
                     data-to="{{ batch.to_year }}" data-type="{{ batch.batch_type }}">
@@ -126,29 +124,6 @@
   </div>
 </div>
 
-<!-- View Batch Modal -->
-<div class="modal fade" id="viewBatchModal" tabindex="-1" role="dialog" aria-labelledby="viewBatchModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="viewBatchModalLabel">View Batch</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p><strong>ID:</strong> <span id="viewBatchId"></span></p>
-        <p><strong>From Year:</strong> <span id="viewFromYear"></span></p>
-        <p><strong>To Year:</strong> <span id="viewToYear"></span></p>
-        <p><strong>Batch Type:</strong> <span id="viewBatchType"></span></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% include 'includes/foot.html' %}
 
 <script>
@@ -166,18 +141,6 @@
       modal.find('#updateFromYear').val(fromYear);
       modal.find('#updateToYear').val(toYear);
       modal.find('#updateBatchType').val(type);
-    });
-    $('#viewBatchModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget);
-      var id = button.data('id');
-      var fromYear = button.data('from');
-      var toYear = button.data('to');
-      var type = button.data('type');
-      var modal = $(this);
-      modal.find('#viewBatchId').text(id);
-      modal.find('#viewFromYear').text(fromYear);
-      modal.find('#viewToYear').text(toYear);
-      modal.find('#viewBatchType').text(type);
     });
   });
 </script>
