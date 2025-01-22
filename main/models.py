@@ -16,8 +16,17 @@ class Graduate(models.Model):
     email = models.EmailField()
     contact = models.CharField(max_length=15)
     address = models.TextField()
+    ambition = models.TextField(blank=True, null=True)
     photo = models.ImageField(upload_to='graduates/photos/', blank=True, null=True)
     batch = models.ForeignKey(Batch, on_delete=models.CASCADE)  # Link to Batch
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+class Account(models.Model):
+    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE)  # One-to-One relationship with Graduate
+    public_key = models.TextField()  # Public Key
+    private_key = models.TextField()  # Private Key
+
+    def __str__(self):
+        return f"Account for {self.graduate.first_name} {self.graduate.last_name}"

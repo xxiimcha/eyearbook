@@ -23,59 +23,71 @@
     
   <!-- Form Section -->
   <div class="col-md-6">
-    <div class="card card-outline card-primary">
-      <div class="card-header">{% if form.errors %}
-        <div class="alert alert-danger">
-          <ul>
-            {% for field, errors in form.errors.items %}
-              <li>{{ field }}: {{ errors|join:", " }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
-      
+    <div class="card card-outline card-primary mb-4">
+      <div class="card-header">
         <h3 class="card-title">Edit Graduate Information</h3>
       </div>
       <div class="card-body">
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            <ul>
+              {% for field, errors in form.errors.items %}
+                <li>{{ field }}: {{ errors|join:", " }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <div class="form-group">
+
+          <!-- Personal Information -->
+          <h5 class="text-primary">Personal Information</h5>
+          <hr>
+          <div class="form-group mb-3">
             <label for="first_name">First Name:</label>
             <input type="text" name="first_name" class="form-control" id="first_name" value="{{ graduate.first_name }}" placeholder="Enter first name" required>
           </div>
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="middle_name">Middle Name:</label>
             <input type="text" name="middle_name" class="form-control" id="middle_name" value="{{ graduate.middle_name }}" placeholder="Enter middle name">
           </div>
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="last_name">Last Name:</label>
             <input type="text" name="last_name" class="form-control" id="last_name" value="{{ graduate.last_name }}" placeholder="Enter last name" required>
           </div>
-          <div class="form-group">
-            <label for="course">Course:</label>
-            <input type="text" name="course" class="form-control" id="course" value="{{ graduate.course }}" placeholder="Enter course" required>
-          </div>
-          <div class="form-group">
-            <label for="school_year">School Year:</label>
-            <input type="text" name="school_year" class="form-control" id="school_year" value="{{ graduate.batch.from_year }}-{{ graduate.batch.to_year }}" readonly>
-          </div>
-          <div class="form-group">
-            <label for="batch_type">Batch Type:</label>
-            <input type="text" name="batch_type" class="form-control" id="batch_type" value="{{ graduate.batch.batch_type }}" readonly>
-          </div>        
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="email">Email:</label>
             <input type="email" name="email" class="form-control" id="email" value="{{ graduate.email }}" placeholder="Enter email" required>
           </div>
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="contact">Contact:</label>
             <input type="text" name="contact" class="form-control" id="contact" value="{{ graduate.contact }}" placeholder="Enter contact number" required>
           </div>
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="address">Address:</label>
             <textarea name="address" class="form-control" id="address" rows="2" placeholder="Enter address" required>{{ graduate.address }}</textarea>
           </div>
-          <div class="form-group">
+
+          <!-- Yearbook Information -->
+          <h5 class="text-secondary mt-4">Yearbook Information</h5>
+          <hr>
+          <div class="form-group mb-3">
+            <label for="course">Course:</label>
+            <input type="text" name="course" class="form-control" id="course" value="{{ graduate.course }}" placeholder="Enter course" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="school_year">School Year:</label>
+            <input type="text" name="school_year" class="form-control" id="school_year" value="{{ graduate.batch.from_year }}-{{ graduate.batch.to_year }}" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label for="batch_type">Batch Type:</label>
+            <input type="text" name="batch_type" class="form-control" id="batch_type" value="{{ graduate.batch.batch_type }}" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label for="ambition">Ambition:</label>
+            <textarea name="ambition" class="form-control" id="ambition" rows="2" placeholder="Enter ambition">{{ graduate.ambition }}</textarea>
+          </div>
+          <div class="form-group mb-3">
             <label for="photo">Insert Image:</label>
             <input type="file" name="photo" class="form-control-file" id="photo" accept="image/*" onchange="previewImage(event)">
           </div>
@@ -94,7 +106,7 @@
       <div class="card-body text-center">
         <div id="photoPreview" style="border: 1px solid #ddd; padding: 10px; height: 300px; display: flex; justify-content: center; align-items: center;">
           {% if graduate.photo %}
-            <img src="{{ graduate.photo.url }}" alt="Current Image" style="max-width: 100%; max-height: 100%;">
+            <img src="{{ graduate.photo.url }}" alt="Current Image" style="max-width: 100%; max-height: 100%; border-radius: 5px;">
           {% else %}
             <span class="text-muted">No Image Available</span>
           {% endif %}
@@ -102,6 +114,7 @@
         <h4 id="previewName" class="mt-3 text-bold">{{ graduate.first_name }} {{ graduate.last_name }}</h4>
         <h5 id="previewCourse" class="text-secondary">{{ graduate.course }}</h5>
         <h6 id="previewBatch">{{ graduate.batch.from_year }}-{{ graduate.batch.to_year }}</h6>
+        <p id="previewAmbition" class="text-muted mt-2">{{ graduate.ambition }}</p>
       </div>
     </div>
   </div>
@@ -113,7 +126,7 @@
     const reader = new FileReader();
     reader.onload = function(e) {
       const preview = document.getElementById('photoPreview');
-      preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 100%;">`;
+      preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 100%; border-radius: 5px;">`;
     };
     if (file) reader.readAsDataURL(file);
   }
@@ -121,14 +134,17 @@
   document.getElementById('first_name').addEventListener('input', updatePreview);
   document.getElementById('last_name').addEventListener('input', updatePreview);
   document.getElementById('course').addEventListener('input', updatePreview);
+  document.getElementById('ambition').addEventListener('input', updatePreview);
 
   function updatePreview() {
     const firstName = document.getElementById('first_name').value;
     const lastName = document.getElementById('last_name').value;
     const course = document.getElementById('course').value;
+    const ambition = document.getElementById('ambition').value;
 
     document.getElementById('previewName').textContent = `${firstName} ${lastName}`;
     document.getElementById('previewCourse').textContent = course;
+    document.getElementById('previewAmbition').textContent = ambition;
   }
 </script>
 {% endblock %}

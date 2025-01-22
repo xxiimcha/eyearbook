@@ -66,6 +66,7 @@ def add_graduate(request, batch_id):
             email=request.POST['email'],
             contact=request.POST['contact'],
             address=request.POST['address'],
+            ambition=request.POST.get('ambition', ''),  # Add ambition field
             batch=batch,  # Link the graduate to the batch via ForeignKey
             photo=request.FILES.get('photo')  # Handle the uploaded photo
         )
@@ -91,9 +92,10 @@ def edit_graduate(request, pk):
 
 def delete_graduate(request, pk):
     graduate = get_object_or_404(Graduate, pk=pk)
+    batch_id = graduate.batch.id if graduate.batch else request.GET.get('batch_id')
     graduate.delete()
     messages.success(request, "Graduate deleted successfully!")
-    return redirect('graduate_list')
+    return redirect('batch_graduates', batch_id=batch_id)  # Redirect to batch-specific graduates page
 
 def batch_graduates(request, batch_id):
     graduates = Graduate.objects.filter(batch_id=batch_id)

@@ -18,10 +18,9 @@
 {% block content %}
 <div class="card card-outline card-primary">
   <div class="card-header">
-    <h3 class="card-title"></h3>
     {% if batch_id %}
         <p class="mb-0">
-            Batch<strong> {{ batch.to_year }}</strong> | <strong>{{ batch.batch_type }}</strong>
+            Batch: <strong>{{ batch.to_year }}</strong> | <strong>{{ batch.batch_type }}</strong>
         </p>
         <a href="{% url 'add_graduate' batch_id=batch_id %}" class="btn btn-sm btn-success float-right">
             <i class="fas fa-plus"></i> Add Graduate
@@ -55,9 +54,9 @@
               <i class="fas fa-edit"></i> Edit
             </a>
             <!-- Delete Button -->
-            <a href="{% url 'delete_graduate' graduate.id %}" class="btn btn-danger btn-sm">
+            <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ graduate.id }}', '{{ graduate.batch.id }}')">
               <i class="fas fa-trash"></i> Delete
-            </a>
+          </button>
           </td>
         </tr>
         {% endfor %}
@@ -70,26 +69,27 @@
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
+      <!-- Modal Header -->
       <div class="modal-header bg-primary text-white">
         <h5 class="modal-title" id="viewModalLabel">Graduate Yearbook Profile</h5>
         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+
+      <!-- Modal Body -->
       <div class="modal-body">
         <div class="row">
           <!-- Profile Picture -->
           <div class="col-md-4 text-center">
-            <div class="profile-picture-wrapper">
-                <img id="modalGraduatePhoto" src="{{ graduate.photo.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="border: 5px solid #007bff; max-height: 200px;">
-            </div>
+            <img id="modalGraduatePhoto" src="" alt="Profile Picture" class="img-fluid rounded-circle shadow" style="border: 5px solid #007bff; max-height: 200px;">
           </div>
           <!-- Graduate Details -->
           <div class="col-md-8">
             <h2 id="modalGraduateName" class="text-primary font-weight-bold text-center"></h2>
             <p class="text-muted text-center">Batch: <span id="modalGraduateBatch"></span></p>
             <hr>
-            <div class="graduate-details">
+            <div class="graduate-details px-4">
               <p><strong>Course:</strong> <span id="modalGraduateCourse"></span></p>
               <p><strong>Email:</strong> <span id="modalGraduateEmail"></span></p>
               <p><strong>Contact:</strong> <span id="modalGraduateContact"></span></p>
@@ -98,6 +98,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Modal Footer -->
       <div class="modal-footer d-flex justify-content-center">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
@@ -106,6 +108,8 @@
 </div>
 
 {% include 'includes/foot.html' %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   $(document).ready(function () {
     $('#graduateTable').DataTable({
@@ -122,6 +126,22 @@
     $('#modalGraduateAddress').text(address);
     $('#modalGraduateBatch').text(batchDetails);
     $('#modalGraduatePhoto').attr('src', photoUrl || 'https://via.placeholder.com/200');
+  }
+
+  function confirmDelete(graduateId, batchId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/graduates/delete/${graduateId}/?batch_id=${batchId}`;
+        }
+    });
   }
 </script>
 {% endblock %}

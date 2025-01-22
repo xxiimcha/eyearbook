@@ -16,7 +16,7 @@ class GraduateForm(forms.ModelForm):
         model = Graduate
         fields = [
             'first_name', 'middle_name', 'last_name', 'course',
-            'email', 'contact', 'address', 'photo', 'batch'
+            'email', 'contact', 'address', 'photo', 'batch', 'ambition'  # Include ambition
         ]
 
     def __init__(self, *args, **kwargs):
@@ -30,7 +30,7 @@ class GraduateAddForm(forms.ModelForm):
         model = Graduate
         fields = [
             'first_name', 'middle_name', 'last_name', 'course',
-            'email', 'contact', 'address', 'photo', 'batch'
+            'email', 'contact', 'address', 'photo', 'batch', 'ambition'  # Include ambition
         ]
 
 class GraduateEditForm(forms.ModelForm):
@@ -38,5 +38,5 @@ class GraduateEditForm(forms.ModelForm):
         model = Graduate
         fields = [
             'first_name', 'middle_name', 'last_name', 'course',
-            'email', 'contact', 'address', 'photo'
+            'email', 'contact', 'address', 'photo', 'ambition'  # Include ambition
         ]
