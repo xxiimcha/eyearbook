@@ -1,7 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Batch, Graduate
+from .models import Batch, Graduate, Account
 from .forms import BatchForm, GraduateForm, GraduateEditForm
 from django.contrib import messages
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.hashes import SHA256
+from cryptography.hazmat.primitives.asymmetric import padding
+import bcrypt
 
 def login_view(request):
     if request.method == 'POST':
@@ -52,13 +58,14 @@ def graduate_list(request, batch_id=None):
 
     return render(request, 'main/graduates/graduate_list.html', {'graduates': graduates, 'batch_id': batch_id, 'batch': batch})
 
+
 def add_graduate(request, batch_id):
     # Ensure the batch exists
     batch = get_object_or_404(Batch, id=batch_id)
     
     if request.method == 'POST':
-        # Process the form submission
-        Graduate.objects.create(
+        # Create the graduate
+        graduate = Graduate.objects.create(
             first_name=request.POST['first_name'],
             middle_name=request.POST.get('middle_name', ''),
             last_name=request.POST['last_name'],
@@ -66,10 +73,40 @@ def add_graduate(request, batch_id):
             email=request.POST['email'],
             contact=request.POST['contact'],
             address=request.POST['address'],
-            ambition=request.POST.get('ambition', ''),  # Add ambition field
+            ambition=request.POST.get('ambition', ''),
             batch=batch,  # Link the graduate to the batch via ForeignKey
             photo=request.FILES.get('photo')  # Handle the uploaded photo
         )
+
+        # Generate RSA keys
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=1024  # Minimum key size is 1024 bits
+        )
+        private_key_pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+        public_key = private_key.public_key()
+        public_key_pem = public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+
+        # Shorten the public key (removing headers and newlines)
+        public_key_clean = public_key_pem.decode().replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "").replace("\n", "")
+
+        # Hash the private key
+        hashed_private_key = bcrypt.hashpw(private_key_pem, bcrypt.gensalt()).decode()
+
+        # Create an account record
+        Account.objects.create(
+            graduate=graduate,
+            public_key=public_key_clean,
+            private_key=hashed_private_key
+        )
+
         # Redirect to the graduate list page for the batch
         return redirect('batch_graduates', batch_id=batch_id)
     
@@ -90,12 +127,23 @@ def edit_graduate(request, pk):
     return render(request, 'main/graduates/edit_graduate.html', {'form': form, 'graduate': graduate})
 
 
+
 def delete_graduate(request, pk):
+    # Get the graduate
     graduate = get_object_or_404(Graduate, pk=pk)
     batch_id = graduate.batch.id if graduate.batch else request.GET.get('batch_id')
+    
+    # Delete the associated account
+    account = Account.objects.filter(graduate=graduate).first()  # Check if the account exists
+    if account:
+        account.delete()
+    
+    # Delete the graduate
     graduate.delete()
-    messages.success(request, "Graduate deleted successfully!")
-    return redirect('batch_graduates', batch_id=batch_id)  # Redirect to batch-specific graduates page
+    messages.success(request, "Graduate and associated account deleted successfully!")
+    
+    # Redirect to batch-specific graduates page
+    return redirect('batch_graduates', batch_id=batch_id)
 
 def batch_graduates(request, batch_id):
     graduates = Graduate.objects.filter(batch_id=batch_id)
