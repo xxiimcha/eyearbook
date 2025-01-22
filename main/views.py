@@ -47,7 +47,6 @@ def update_batch(request, batch_id):
 
     return render(request, "update_batch.html", {"batch": batch})
 
-
 def graduate_list(request, batch_id=None):
     if batch_id:
         graduates = Graduate.objects.filter(batch__id=batch_id)
@@ -126,8 +125,6 @@ def edit_graduate(request, pk):
 
     return render(request, 'main/graduates/edit_graduate.html', {'form': form, 'graduate': graduate})
 
-
-
 def delete_graduate(request, pk):
     # Get the graduate
     graduate = get_object_or_404(Graduate, pk=pk)
@@ -149,3 +146,7 @@ def batch_graduates(request, batch_id):
     graduates = Graduate.objects.filter(batch_id=batch_id)
     batch = get_object_or_404(Batch, id=batch_id)
     return render(request, 'main/graduates/graduate_list.html', {'graduates': graduates, 'batch': batch})
+
+def account_list(request):
+    accounts = Account.objects.select_related('graduate')  # Use select_related for efficiency
+    return render(request, 'main/accounts/account_list.html', {'accounts': accounts})

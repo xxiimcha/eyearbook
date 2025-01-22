@@ -17,6 +17,10 @@ urlpatterns = [
 
     path('graduates/edit/<int:pk>/', views.edit_graduate, name='edit_graduate'),  # Edit graduate
     path('graduates/delete/<int:pk>/', views.delete_graduate, name='delete_graduate'),  # Delete graduate
+
+    # Accounts Module
+    path('accounts/', views.account_list, name='account_list'),
+
 ]
 
 

@@ -1,0 +1,112 @@
+{% extends 'base-admin.html' %}
+
+{% block content-header %}
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1 class="m-0">Account List</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-outline card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Accounts</h3>
+    </div>
+    <div class="card-body">
+        <table id="accountTable" class="table table-bordered table-striped">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>ID</th>
+                    <th>Graduate Name</th>
+                    <th>Public Key</th>
+                    <th>Private Key</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>{{ account.id }}</td>
+                    <td>
+                        <strong>{{ account.graduate.first_name }} {{ account.graduate.last_name }}</strong>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="publicKey-{{ account.id }}" 
+                                class="form-control" 
+                                value="{{ account.public_key }}" 
+                                readonly>
+                            <div class="input-group-append">
+                                <button class="btn btn-success" onclick="copyToClipboard('publicKey-{{ account.id }}')" data-toggle="tooltip" title="Copy to clipboard">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="privateKey-{{ account.id }}" 
+                                class="form-control" 
+                                value="{{ account.private_key }}" 
+                                readonly>
+                            <div class="input-group-append">
+                                <button class="btn btn-warning" onclick="copyToClipboard('privateKey-{{ account.id }}')" data-toggle="tooltip" title="Copy to clipboard">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% include 'includes/foot.html' %}
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable
+        $('#accountTable').DataTable({
+            responsive: true,
+            autoWidth: false
+        });
+
+        // Initialize Bootstrap tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    function copyToClipboard(elementId) {
+        const input = document.getElementById(elementId);
+        input.select();
+        input.setSelectionRange(0, 99999); // For mobile devices
+
+        navigator.clipboard.writeText(input.value).then(() => {
+            toastr.success('Copied to clipboard!', 'Success');
+        }).catch(() => {
+            toastr.error('Failed to copy. Please try again.', 'Error');
+        });
+    }
+</script>
+
+<style>
+    .input-group .form-control {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        background-color: #f8f9fa;
+    }
+    .input-group .form-control[readonly] {
+        cursor: default;
+    }
+    .input-group .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
