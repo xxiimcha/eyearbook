@@ -1,0 +1,40 @@
+{% extends 'base-admin.html' %}
+
+{% block content-header %}
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1 class="m-0">Select Batch</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-outline card-primary">
+    <div class="card-body">
+        <div class="row">
+            {% for batch in batches %}
+            <div class="col-md-3 text-center">
+                <a href="{% url 'batch_courses' batch.from_year batch.to_year %}" class="btn btn-outline-primary btn-block">
+                    <i class="fas fa-graduation-cap fa-2x"></i>
+                    <div>{{ batch.from_year }} - {{ batch.to_year }}</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>        
+    </div>
+</div>
+
+<style>
+    .border {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .border:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .fa-graduation-cap {
+        color: #007bff;
+    }
+</style>
+{% endblock %}
+    

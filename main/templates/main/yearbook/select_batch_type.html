@@ -1,0 +1,28 @@
+{% extends 'base-admin.html' %}
+
+{% block content-header %}
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1 class="m-0">Select Batch Type</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-outline card-primary">
+    <div class="card-body">
+        <div class="row justify-content-center">
+            {% for batch_type in batch_types %}
+            <div class="col-md-3 col-sm-6 mb-4 text-center">
+                <a href="{% url 'batch_courses' batch_id=batch.id batch_type=batch_type %}" class="d-block text-decoration-none">
+                    <div class="border rounded p-3 shadow-sm">
+                        <i class="fas fa-list-alt fa-3x mb-3 text-secondary"></i>
+                        <h5 class="m-0">{{ batch_type }}</h5>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

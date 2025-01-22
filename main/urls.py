@@ -21,6 +21,11 @@ urlpatterns = [
     # Accounts Module
     path('accounts/', views.account_list, name='account_list'),
 
+    # Yearbook Module
+    path('yearbook/', views.select_batch, name='select_batch'),
+    path('yearbook/<int:from_year>/<int:to_year>/courses/', views.batch_courses, name='batch_courses'),
+    path('yearbook/<int:from_year>/<int:to_year>/<str:course>/graduates/', views.course_graduates, name='course_graduates'),
+
 ]
 
 

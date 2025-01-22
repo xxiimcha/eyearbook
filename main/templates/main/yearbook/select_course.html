@@ -1,0 +1,39 @@
+{% extends 'base-admin.html' %}
+
+{% block content-header %}
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1 class="m-0">Select Course</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-outline card-primary">
+    <div class="card-body">
+        <!-- Batch Type Selection -->
+        <div class="mb-4">
+            <h5>Select Batch Type</h5>
+            <div class="btn-group" role="group">
+                {% for batch in batches %}
+                <a href="?batch_id={{ batch.id }}" class="btn btn-outline-primary {% if batch.id|stringformat:"s" == request.GET.batch_id %}active{% endif %}">
+                    {{ batch.batch_type }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Course Selection -->
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-4 text-center">
+                <a href="{% url 'course_graduates' from_year=from_year to_year=to_year course=course %}" class="btn btn-outline-secondary btn-block">
+                    <i class="fas fa-book fa-2x"></i>
+                    <div>{{ course }}</div>
+                </a>                
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

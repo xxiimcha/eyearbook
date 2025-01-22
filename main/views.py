@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Batch, Graduate, Account
+from itertools import groupby
 from .forms import BatchForm, GraduateForm, GraduateEditForm
 from django.contrib import messages
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -147,6 +148,38 @@ def batch_graduates(request, batch_id):
     batch = get_object_or_404(Batch, id=batch_id)
     return render(request, 'main/graduates/graduate_list.html', {'graduates': graduates, 'batch': batch})
 
+# Account Module
 def account_list(request):
     accounts = Account.objects.select_related('graduate')  # Use select_related for efficiency
     return render(request, 'main/accounts/account_list.html', {'accounts': accounts})
+
+# Yearbook Module
+def select_batch(request):
+    all_batches = Batch.objects.all().order_by('from_year', 'to_year')
+    # Use groupby to deduplicate based on `from_year` and `to_year`
+    unique_batches = []
+    seen = set()
+    for batch in all_batches:
+        identifier = (batch.from_year, batch.to_year)
+        if identifier not in seen:
+            unique_batches.append(batch)
+            seen.add(identifier)
+
+    return render(request, 'main/yearbook/select_batch.html', {'batches': unique_batches})
+
+# Batch Courses View
+def batch_courses(request, from_year, to_year):
+    batches = Batch.objects.filter(from_year=from_year, to_year=to_year)
+    courses = Graduate.objects.filter(batch__in=batches).values_list('course', flat=True).distinct()
+    return render(request, 'main/yearbook/select_course.html', {
+        'batches': batches,
+        'courses': courses,
+        'from_year': from_year,
+        'to_year': to_year
+    })
+
+# Course Graduates View
+def course_graduates(request, from_year, to_year, course):
+    batches = Batch.objects.filter(from_year=from_year, to_year=to_year)
+    graduates = Graduate.objects.filter(batch__in=batches, course=course)
+    return render(request, 'main/yearbook/graduates.html', {'graduates': graduates, 'course': course})

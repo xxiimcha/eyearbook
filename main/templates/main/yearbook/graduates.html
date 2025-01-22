@@ -1,0 +1,68 @@
+{% extends 'base-admin.html' %}
+
+{% block content-header %}
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1 class="m-0">Graduates</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card card-outline card-primary">
+    <div class="card-body">
+        <div class="row">
+            {% for graduate in graduates %}
+            <div class="col-md-2 text-center">
+                <div class="card graduate-card">
+                    <div class="card-img-container">
+                        <img src="{{ graduate.photo.url }}" class="card-img-top" alt="{{ graduate.first_name }} {{ graduate.last_name }}">
+                    </div>
+                    <div class="card-body text-center">
+                        <center><h5 class="card-title">{{ graduate.first_name }} {{ graduate.last_name }}</h5></center>
+                        <p class="card-text">{{ graduate.ambition }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .graduate-card {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .card-img-container {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+        margin: 0 auto;
+    }
+
+    .card-img-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+
+    .card-body h5 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .card-body p {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
