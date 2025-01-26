@@ -1,0 +1,5 @@
+bcrypt==4.0.1
+cryptography==41.0.3
+Django==5.1.4
+pillow==10.0.0
+qrcode==7.3.1
