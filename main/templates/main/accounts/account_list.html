@@ -21,6 +21,7 @@
                     <th>Graduate Name</th>
                     <th>Public Key</th>
                     <th>Private Key</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,7 +61,38 @@
                             </div>
                         </div>
                     </td>
+                    <td>
+                        <button class="btn btn-info" data-toggle="modal" data-target="#detailsModal-{{ account.id }}" onclick="generateQRCode('{{ account.public_key }}', '{{ account.id }}')">
+                            <i class="fas fa-qrcode"></i> View Details
+                        </button>
+                    </td>
                 </tr>
+
+                <!-- Modal -->
+                <div class="modal fade" id="detailsModal-{{ account.id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel-{{ account.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="detailsModalLabel-{{ account.id }}">Account Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5><strong>Graduate Name:</strong> {{ account.graduate.first_name }} {{ account.graduate.last_name }}</h5>
+                                <p><strong>Public Key:</strong> {{ account.public_key }}</p>
+                                <p><strong>Private Key:</strong> {{ account.private_key }}</p>
+                                <div class="text-center">
+                                    <h5>QR Code:</h5>
+                                    <div id="qrCodeContainer-{{ account.id }}"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
             </tbody>
         </table>
@@ -68,6 +100,7 @@
 </div>
 
 {% include 'includes/foot.html' %}
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script>
     $(document).ready(function () {
         // Initialize DataTable
@@ -91,6 +124,14 @@
             toastr.error('Failed to copy. Please try again.', 'Error');
         });
     }
+
+    function generateQRCode(data, accountId) {
+        const qrContainer = document.getElementById(`qrCodeContainer-${accountId}`);
+        qrContainer.innerHTML = ""; // Clear any existing QR code
+        QRCode.toCanvas(qrContainer, data, function (error) {
+            if (error) console.error(error);
+        });
+    }
 </script>
 
 <style>
@@ -107,6 +148,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    .modal .modal-body {
+        word-break: break-word;
+    }
+    .modal .modal-body #qrCodeContainer {
+        margin: auto;
     }
 </style>
 {% endblock %}
