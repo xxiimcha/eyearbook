@@ -10,10 +10,33 @@ from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.hazmat.primitives.asymmetric import padding
 import bcrypt
 
+
+def landing_page(request):
+    return render(request, 'main/landing.html')  # Make sure the template exists
+
 def login_view(request):
     if request.method == 'POST':
         return redirect('dashboard')
     return render(request, 'main/login.html')
+
+def form_page(request):
+    batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
+    
+    batch_data = {}
+
+    for record in batch_records:
+        year_range = f"{record['from_year']} - {record['to_year']}"
+        batch_id = record["id"]
+        batch_type = record["batch_type"]
+
+        if year_range not in batch_data:
+            batch_data[year_range] = []
+        batch_data[year_range].append({"id": batch_id, "type": batch_type})  # Store batch_id & batch_type together
+
+    context = {
+        "batch_years": batch_data  # Now a dictionary containing batch IDs
+    }
+    return render(request, "main/form.html", context)
 
 def dashboard_view(request):
     context = {

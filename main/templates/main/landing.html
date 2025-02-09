@@ -1,0 +1,66 @@
+{% extends 'base.html' %}  <!-- Extend from base template if available -->
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center d-flex align-items-center justify-content-center">
+    <div class="container">
+        <h1 class="display-4">Welcome to eYearbook</h1>
+        <p class="lead">Explore and find your batchmates from previous years!</p>
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Get Started</a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-4">
+                <i class="fas fa-book fa-3x text-primary"></i>
+                <h4>Yearbook Archive</h4>
+                <p>Browse yearbooks from different batches and relive memories.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-users fa-3x text-success"></i>
+                <h4>Connect with Alumni</h4>
+                <p>Reconnect with old friends and make new ones from your batch.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-lock fa-3x text-warning"></i>
+                <h4>Secure Access</h4>
+                <p>Your data and connections are safe with our secure system.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block navbar %}
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">eYearbook</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary text-white px-4" href="{% url 'login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+<!-- Custom Styles -->
+<style>
+    .hero-section {
+        background: linear-gradient(to right, #007bff, #6610f2);
+        color: white;
+        height: 60vh;
+    }
+</style>
