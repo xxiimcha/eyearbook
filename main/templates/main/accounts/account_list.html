@@ -126,12 +126,34 @@
     }
 
     function generateQRCode(data, accountId) {
-        const qrContainer = document.getElementById(`qrCodeContainer-${accountId}`);
-        qrContainer.innerHTML = ""; // Clear any existing QR code
-        QRCode.toCanvas(qrContainer, data, function (error) {
-            if (error) console.error(error);
-        });
+    console.log("Generating QR Code for Account ID:", accountId, "Data:", data);
+
+    if (!data || typeof data !== "string" || data.trim() === "") {
+        console.error("Invalid QR Code data for account:", accountId);
+        return;
     }
+
+    // Encode the data in a URL-safe manner
+    const urlSafeData = btoa(unescape(encodeURIComponent(data)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+    console.log("Encoded Data (URL Safe):", urlSafeData);
+
+    const qrContainer = document.getElementById(`qrCodeContainer-${accountId}`);
+    qrContainer.innerHTML = ""; // Clear previous QR code
+
+    try {
+        QRCode.toCanvas(qrContainer, urlSafeData, function (error) {
+            if (error) {
+                console.error("QR Code Generation Error:", error);
+            }
+        });
+    } catch (err) {
+        console.error("Exception in QR Code generation:", err);
+    }
+}
+
+
 </script>
 
 <style>
