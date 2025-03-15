@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Batch, Graduate, Account
 from itertools import groupby
 from .forms import BatchForm, GraduateForm, GraduateEditForm
+from django.http import JsonResponse
+from django.urls import reverse
 from django.contrib import messages
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
@@ -175,6 +177,15 @@ def batch_graduates(request, batch_id):
 def account_list(request):
     accounts = Account.objects.select_related('graduate')  # Use select_related for efficiency
     return render(request, 'main/accounts/account_list.html', {'accounts': accounts})
+
+# QR Generation
+def get_qr_code_data(request, account_id):
+    account = get_object_or_404(Account, id=account_id)
+    
+    # Generate a short URL containing the public key
+    qr_url = request.build_absolute_uri(reverse('view_public_key', args=[account_id]))
+
+    return JsonResponse({"qr_url": qr_url})
 
 # Yearbook Module
 def select_batch(request):
