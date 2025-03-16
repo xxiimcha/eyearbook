@@ -10,16 +10,35 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.hazmat.primitives.asymmetric import padding
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 import bcrypt
-
+from django.contrib.auth import get_user_model  # Import this
 
 def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
 
+
+User = get_user_model()  # Get the User model
+
 def login_view(request):
-    if request.method == 'POST':
-        return redirect('dashboard')
-    return render(request, 'main/login.html')
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        try:
+            user = User.objects.get(email=email)  # Fetch user by email
+            user = authenticate(request, username=user.username, password=password)  # Authenticate using username
+        except User.DoesNotExist:
+            user = None
+
+        if user is not None:
+            login(request, user)
+            return redirect("dashboard")  # Redirect to dashboard
+        else:
+            messages.error(request, "Invalid email or password")
+
+    return render(request, "main/login.html")
 
 def form_page(request):
     batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
@@ -40,6 +59,7 @@ def form_page(request):
     }
     return render(request, "main/form.html", context)
 
+@login_required
 def dashboard_view(request):
     context = {
         "total_batches": 12,
