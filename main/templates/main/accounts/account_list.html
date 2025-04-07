@@ -71,23 +71,53 @@
                 <!-- Modal -->
                 <div class="modal fade" id="detailsModal-{{ account.id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel-{{ account.id }}" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
+                        <div class="modal-content border-primary">
+                            <div class="modal-header bg-primary text-white">
                                 <h5 class="modal-title" id="detailsModalLabel-{{ account.id }}">Account Details</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
-                                <h5><strong>Graduate Name:</strong> {{ account.graduate.first_name }} {{ account.graduate.last_name }}</h5>
-                                <p style="white-space: pre-wrap;"><strong>Public Key:</strong> {{ account.public_key }}</p>
-                                <p style="white-space: pre-wrap;"><strong>Private Key:</strong> {{ account.private_key }}</p>
-                                <div class="text-center">
-                                    <h5>QR Code:</h5>
-                                    <div id="qrCodeContainer-{{ account.id }}"></div>
+                            <div class="modal-body p-4">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-info shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Graduate Name</h6>
+                                                <p class="card-text font-weight-bold">{{ account.graduate.first_name }} {{ account.graduate.last_name }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-success shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Public Key</h6>
+                                                <p class="card-text" style="white-space: pre-wrap;">{{ account.public_key }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3">
+                                        <div class="card border-warning shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Private Key</h6>
+                                                <p class="card-text" style="white-space: pre-wrap;">{{ account.private_key }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 text-center">
+                                        <div class="card border-dark shadow-sm">
+                                            <div class="card-body">
+                                                <h5 class="card-title">QR Code</h5>
+                                                <div id="qrCodeContainer-{{ account.id }}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer justify-content-end">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             </div>
                         </div>
