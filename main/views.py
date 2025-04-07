@@ -41,7 +41,6 @@ def login_view(request):
 
     return render(request, "main/login.html")
 
-
 def form_page(request, account_id=None):
     # Fetch batch data
     batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
@@ -57,6 +56,7 @@ def form_page(request, account_id=None):
 
     graduate_data = None
     graduate = None
+    submitted = False
 
     if account_id:
         account = get_object_or_404(Account, id=account_id)
@@ -66,9 +66,10 @@ def form_page(request, account_id=None):
             "mobile_number": graduate.contact,
             "address": graduate.address
         }
+        submitted = Yearbook.objects.filter(graduate=graduate).exists()
 
     # Handle form submission
-    if request.method == "POST":
+    if request.method == "POST" and graduate and not submitted:
         civil_status = request.POST.get("civil_status")
         birthday = request.POST.get("birthday")
         region = request.POST.get("region")
@@ -82,39 +83,30 @@ def form_page(request, account_id=None):
         income = request.POST.get("income")
         agreed = bool(request.POST.get("data_privacy"))
 
-        if graduate:
-            # Save to Yearbook model
-            Yearbook.objects.create(
-                graduate=graduate,
-                civil_status=civil_status,
-                birthday=birthday,
-                region=region,
-                sex=sex,
-                honors=honors,
-                grad_reasons=json.dumps(grad_reasons),
-                other_reason=other_reason,
-                employment_status=employment_status,
-                job_title=job_title,
-                company_name=company_name,
-                income=income,
-                agreed_to_privacy=agreed
-            )
-            return redirect('form_page_success')  # Make sure this view/template exists
+        # Save to Yearbook model with status = pending
+        Yearbook.objects.create(
+            graduate=graduate,
+            civil_status=civil_status,
+            birthday=birthday,
+            region=region,
+            sex=sex,
+            honors=honors,
+            grad_reasons=json.dumps(grad_reasons),
+            other_reason=other_reason,
+            employment_status=employment_status,
+            job_title=job_title,
+            company_name=company_name,
+            income=income,
+            agreed_to_privacy=agreed,
+            status="Pending"
+        )
+        submitted = True  # Prevent re-entry after saving
 
-        # fallback if graduate not found
-        context = {
-            "batch_years": batch_data,
-            "graduate_data": graduate_data,
-            "account_id": account_id,
-            "error": "Graduate not found or data incomplete."
-        }
-        return render(request, "main/form.html", context)
-
-    # GET request (form display)
     context = {
         "batch_years": batch_data,
         "graduate_data": graduate_data,
-        "account_id": account_id 
+        "account_id": account_id,
+        "submitted": submitted
     }
 
     return render(request, "main/form.html", context)

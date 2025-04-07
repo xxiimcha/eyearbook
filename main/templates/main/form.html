@@ -11,162 +11,169 @@
                     <h4 class="mb-0 text-center">Registration Form</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{% if account_id %}{% url 'form_page' account_id %}{% else %}{% url 'form_page' %}{% endif %}">
-
-                        {% csrf_token %}
-
-                        <!-- Personal Information Section -->
-                        <h5 class="text-primary">Personal Information</h5>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="full_name">Complete Name</label>
-                                <input type="text" class="form-control" id="full_name" name="full_name" required
-                                       value="{{ graduate_data.full_name|default:'' }}">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="mobile_number">Mobile Number</label>
-                                <input type="tel" class="form-control" id="mobile_number" name="mobile_number" required
-                                       value="{{ graduate_data.mobile_number|default:'' }}">
-                            </div>
+                
+                    {% if submitted %}
+                        <div class="alert alert-info text-center">
+                            You have already sent your data and it is now under review.
                         </div>
+                    {% else %}
+                        <form method="POST" action="{% if account_id %}{% url 'form_page' account_id %}{% else %}{% url 'form_page' %}{% endif %}">
 
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="address">Permanent Address</label>
-                                <input type="text" class="form-control" id="address" name="address" required
-                                       value="{{ graduate_data.address|default:'' }}">
+                            {% csrf_token %}
+
+                            <!-- Personal Information Section -->
+                            <h5 class="text-primary">Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="full_name">Complete Name</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" required
+                                        value="{{ graduate_data.full_name|default:'' }}">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="mobile_number">Mobile Number</label>
+                                    <input type="tel" class="form-control" id="mobile_number" name="mobile_number" required
+                                        value="{{ graduate_data.mobile_number|default:'' }}">
+                                </div>
                             </div>
-                            <div class="col-md-6 form-group">
-                                <label for="civil_status">Civil Status</label>
-                                <select class="form-control" id="civil_status" name="civil_status">
-                                    <option>Single</option>
-                                    <option>Married</option>
-                                    <option>Divorced</option>
-                                    <option>Widowed</option>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="address">Permanent Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" required
+                                        value="{{ graduate_data.address|default:'' }}">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="civil_status">Civil Status</label>
+                                    <select class="form-control" id="civil_status" name="civil_status">
+                                        <option>Single</option>
+                                        <option>Married</option>
+                                        <option>Divorced</option>
+                                        <option>Widowed</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="birthday">Birthday</label>
+                                    <input type="date" class="form-control" id="birthday" name="birthday" required>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="region">Region of Origin</label>
+                                    <input type="text" class="form-control" id="region" name="region" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="sex">Sex</label>
+                                    <select class="form-control" id="sex" name="sex">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Educational Background Section -->
+                            <h5 class="text-primary mt-4">Educational Background</h5>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="year_graduated">Year Graduated</label>
+                                    <select class="form-control" id="year_graduated" name="year_graduated" required onchange="updateBatchTypes()">
+                                        <option value="">Select Year</option>
+                                        {% for year_range in batch_years.keys %}
+                                            <option value="{{ year_range }}">{{ year_range }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="batch_type">Batch Type</label>
+                                    <select class="form-control" id="batch_type" name="batch_id" required>
+                                        <option value="">Select Batch Type</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="honors">Honors/Awards Received</label>
+                                <input type="text" class="form-control" id="honors" name="honors">
+                            </div>
+
+                            <div class="form-group">
+                                <label><strong>Reason(s) for pursuing Graduate/MS/MA/PhD degree(s).</strong> You may check(/) more than one answer</label>
+                            
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="high_grades"><label class="form-check-label">High grades in the course or subject area(s) related to the course</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="good_grades_college"><label class="form-check-label">Good grades in college</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="influence_parents"><label class="form-check-label">Influence of parents or relatives</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="peer_influence"><label class="form-check-label">Peer Influence</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="role_model"><label class="form-check-label">Inspired by a role model</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="passion_profession"><label class="form-check-label">Strong passion for the profession</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="immediate_employment"><label class="form-check-label">Prospect for immediate employment</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="status_prestige"><label class="form-check-label">Status or prestige of the profession</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="availability_course"><label class="form-check-label">Availability of course offering in chosen institution</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="career_advancement"><label class="form-check-label">Prospect of career advancement</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="affordability"><label class="form-check-label">Affordability for the family</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="attractive_compensation"><label class="form-check-label">Prospect of attractive compensation</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="employment_abroad"><label class="form-check-label">Opportunity for employment abroad</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="no_better_idea"><label class="form-check-label">No particular choice or no better idea</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="not_applicable"><label class="form-check-label">Not applicable</label></div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="grad_reasons" value="other">
+                                    <label class="form-check-label">Other (please specify):</label>
+                                    <input type="text" class="form-control mt-2" name="other_reason">
+                                </div>
+                            </div>                        
+
+                            <!-- Employment Data Section -->
+                            <h5 class="text-primary mt-4">Employment Data</h5>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Are you presently employed?</label>
+                                    <select class="form-control" name="employment_status" required>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                        <option value="never_employed">Never Employed</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label for="job_title">Present Occupation</label>
+                                    <input type="text" class="form-control" id="job_title" name="job_title">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="company_name">Current Employer or Company</label>
+                                <input type="text" class="form-control" id="company_name" name="company_name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="income">Initial Gross Monthly Earning</label>
+                                <select class="form-control" name="income">
+                                    <option>Below 5,000.00 pesos</option>
+                                    <option>5,000.00 to less than 10,000.00 pesos</option>
+                                    <option>10,000.00 to less than 15,000.00 pesos</option>
+                                    <option>15,000.00 to less than 20,000.00 pesos</option>
+                                    <option>20,000.00 to less than 25,000.00 pesos</option>
+                                    <option>25,000.00 pesos and above</option>
+                                    <option>Not Applicable</option>
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="birthday">Birthday</label>
-                                <input type="date" class="form-control" id="birthday" name="birthday" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="region">Region of Origin</label>
-                                <input type="text" class="form-control" id="region" name="region" required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="sex">Sex</label>
-                                <select class="form-control" id="sex" name="sex">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                    <option>Prefer not to say</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Educational Background Section -->
-                        <h5 class="text-primary mt-4">Educational Background</h5>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="year_graduated">Year Graduated</label>
-                                <select class="form-control" id="year_graduated" name="year_graduated" required onchange="updateBatchTypes()">
-                                    <option value="">Select Year</option>
-                                    {% for year_range in batch_years.keys %}
-                                        <option value="{{ year_range }}">{{ year_range }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="batch_type">Batch Type</label>
-                                <select class="form-control" id="batch_type" name="batch_id" required>
-                                    <option value="">Select Batch Type</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="honors">Honors/Awards Received</label>
-                            <input type="text" class="form-control" id="honors" name="honors">
-                        </div>
-
-                        <div class="form-group">
-                            <label><strong>Reason(s) for pursuing Graduate/MS/MA/PhD degree(s).</strong> You may check(/) more than one answer</label>
-                        
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="high_grades"><label class="form-check-label">High grades in the course or subject area(s) related to the course</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="good_grades_college"><label class="form-check-label">Good grades in college</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="influence_parents"><label class="form-check-label">Influence of parents or relatives</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="peer_influence"><label class="form-check-label">Peer Influence</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="role_model"><label class="form-check-label">Inspired by a role model</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="passion_profession"><label class="form-check-label">Strong passion for the profession</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="immediate_employment"><label class="form-check-label">Prospect for immediate employment</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="status_prestige"><label class="form-check-label">Status or prestige of the profession</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="availability_course"><label class="form-check-label">Availability of course offering in chosen institution</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="career_advancement"><label class="form-check-label">Prospect of career advancement</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="affordability"><label class="form-check-label">Affordability for the family</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="attractive_compensation"><label class="form-check-label">Prospect of attractive compensation</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="employment_abroad"><label class="form-check-label">Opportunity for employment abroad</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="no_better_idea"><label class="form-check-label">No particular choice or no better idea</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="grad_reasons" value="not_applicable"><label class="form-check-label">Not applicable</label></div>
+                            <!-- Data Privacy Agreement -->
+                            <h5 class="text-primary mt-4">Data Privacy Statement</h5>
+                            <p class="text-muted">
+                                By submitting this form, you acknowledge and agree that your data will be stored securely and used only for statistical and research purposes.
+                            </p>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="grad_reasons" value="other">
-                                <label class="form-check-label">Other (please specify):</label>
-                                <input type="text" class="form-control mt-2" name="other_reason">
+                                <input class="form-check-input" type="checkbox" name="data_privacy" required>
+                                <label class="form-check-label">I agree to the Data Privacy Statement</label>
                             </div>
-                        </div>                        
 
-                        <!-- Employment Data Section -->
-                        <h5 class="text-primary mt-4">Employment Data</h5>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Are you presently employed?</label>
-                                <select class="form-control" name="employment_status" required>
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                    <option value="never_employed">Never Employed</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="job_title">Present Occupation</label>
-                                <input type="text" class="form-control" id="job_title" name="job_title">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="company_name">Current Employer or Company</label>
-                            <input type="text" class="form-control" id="company_name" name="company_name">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="income">Initial Gross Monthly Earning</label>
-                            <select class="form-control" name="income">
-                                <option>Below 5,000.00 pesos</option>
-                                <option>5,000.00 to less than 10,000.00 pesos</option>
-                                <option>10,000.00 to less than 15,000.00 pesos</option>
-                                <option>15,000.00 to less than 20,000.00 pesos</option>
-                                <option>20,000.00 to less than 25,000.00 pesos</option>
-                                <option>25,000.00 pesos and above</option>
-                                <option>Not Applicable</option>
-                            </select>
-                        </div>
-
-                        <!-- Data Privacy Agreement -->
-                        <h5 class="text-primary mt-4">Data Privacy Statement</h5>
-                        <p class="text-muted">
-                            By submitting this form, you acknowledge and agree that your data will be stored securely and used only for statistical and research purposes.
-                        </p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="data_privacy" required>
-                            <label class="form-check-label">I agree to the Data Privacy Statement</label>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary btn-block mt-4">Submit Registration</button>
-                    </form>
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-block mt-4">Submit Registration</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
