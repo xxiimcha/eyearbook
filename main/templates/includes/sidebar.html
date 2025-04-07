@@ -1,19 +1,19 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #28a745;">
   <!-- Brand Logo -->
-  <a href="#" class="brand-link" style="background-color: #218838;">
-      <center><span class="brand-text font-weight-light" style="color: black;">EYEARBOOK</span></center>
+  <a href="#" class="brand-link text-center" style="background-color: #218838;">
+    <span class="brand-text font-weight-bold text-white">EYEARBOOK</span>
   </a>
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <!-- Sidebar user panel -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+    <!-- User Panel -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
       <div class="image">
         <img src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
       </div>
       <div class="info">
-        <a href="#" class="d-block" style="color: black;">ADMIN</a>
+        <a href="#" class="d-block text-white font-weight-bold">ADMIN</a>
       </div>
     </div>
 
@@ -22,44 +22,32 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
         <li class="nav-item">
           <a href="/dashboard" class="nav-link" id="dashboard">
-            <i class="nav-icon fas fa-book"></i>
-            <p style="color: black;">Dashboard</p>
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>Dashboard</p>
           </a>
         </li>
         <li class="nav-item">
           <a href="/yearbook" class="nav-link" id="yearbook">
-            <i class="nav-icon fas fa-book"></i>
-            <p style="color: black;">Yearbook</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/transaction" class="nav-link" id="transaction">
-            <i class="nav-icon fas fa-exchange-alt"></i>
-            <p style="color: black;">Transaction</p>
+            <i class="nav-icon fas fa-book-open"></i>
+            <p>Yearbook</p>
           </a>
         </li>
         <li class="nav-item">
           <a href="/configure" class="nav-link" id="configure">
             <i class="nav-icon fas fa-cogs"></i>
-            <p style="color: black;">Configure</p>
+            <p>Configure</p>
           </a>
         </li>
         <li class="nav-item">
           <a href="/accounts" class="nav-link" id="accounts">
             <i class="nav-icon fas fa-users"></i>
-            <p style="color: black;">Accounts</p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/records" class="nav-link" id="records">
-            <i class="nav-icon fas fa-folder"></i>
-            <p style="color: black;">Records</p>
+            <p>Accounts</p>
           </a>
         </li>
         <li class="nav-item">
           <a href="/analytics" class="nav-link" id="analytics">
-            <i class="nav-icon fas fa-chart-bar"></i>
-            <p style="color: black;">Analytics</p>
+            <i class="nav-icon fas fa-chart-line"></i>
+            <p>Analytics</p>
           </a>
         </li>
       </ul>
@@ -67,13 +55,47 @@
   </div>
 </aside>
 
+<style>
+  .main-sidebar {
+    font-size: 15px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .main-sidebar .nav-link {
+    color: #e8f5e9;
+    border-radius: 5px;
+    margin: 3px 10px;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+  }
+
+  .main-sidebar .nav-link:hover {
+    background-color: #1e7e34;
+    color: #fff;
+  }
+
+  .main-sidebar .nav-link.active {
+    background-color: #145d29;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  .main-sidebar .nav-icon {
+    margin-right: 8px;
+  }
+
+  .brand-link span {
+    font-size: 1.2rem;
+  }
+</style>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const currentPath = window.location.pathname.replace(/\/$/, ""); // Remove trailing slash
+    const currentPath = window.location.pathname.replace(/\/$/, "");
     const navLinks = document.querySelectorAll(".nav-link");
 
     navLinks.forEach(link => {
-      const linkPath = link.getAttribute("href").replace(/\/$/, ""); // Remove trailing slash for comparison
+      const linkPath = link.getAttribute("href").replace(/\/$/, "");
       if (linkPath === currentPath) {
         link.classList.add("active");
       }

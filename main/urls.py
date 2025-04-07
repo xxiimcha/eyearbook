@@ -31,6 +31,7 @@ urlpatterns = [
     path('yearbook/<int:from_year>/<int:to_year>/courses/', views.batch_courses, name='batch_courses'),
     path('yearbook/<int:from_year>/<int:to_year>/<str:course>/graduates/', views.course_graduates, name='course_graduates'),
 
+    path('analytics/', views.analytics_view, name='analytics'),
 ]
 
 

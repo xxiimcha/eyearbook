@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Batch, Graduate, Account,  Yearbook
+from django.db.models import Count
 from itertools import groupby
 from .forms import BatchForm, GraduateForm, GraduateEditForm
 from django.http import JsonResponse
@@ -292,3 +293,39 @@ def course_graduates(request, from_year, to_year, course):
     batches = Batch.objects.filter(from_year=from_year, to_year=to_year)
     graduates = Graduate.objects.filter(batch__in=batches, course=course)
     return render(request, 'main/yearbook/graduates.html', {'graduates': graduates, 'course': course})
+
+
+@login_required
+def analytics_view(request):
+    total_graduates = Graduate.objects.count()
+    total_submitted = Yearbook.objects.count()
+    total_pending = Yearbook.objects.filter(status="pending").count()
+
+    # Chart data
+    batch_labels = []
+    batch_counts = []
+    batches = Batch.objects.all()
+    for batch in batches:
+        count = Yearbook.objects.filter(graduate__batch=batch).count()
+        if count > 0:
+            batch_labels.append(f"{batch.from_year}-{batch.to_year} {batch.batch_type}")
+            batch_counts.append(count)
+
+    status_counts = [
+        Yearbook.objects.filter(status="pending").count(),
+        Yearbook.objects.filter(status="approved").count(),
+        Yearbook.objects.filter(status="rejected").count()
+    ]
+
+    recent_submissions = Yearbook.objects.select_related("graduate").order_by('-id')[:5]
+
+    context = {
+        "total_graduates": total_graduates,
+        "total_submitted": total_submitted,
+        "total_pending": total_pending,
+        "batch_labels": batch_labels,
+        "batch_counts": batch_counts,
+        "status_counts": status_counts,
+        "recent_submissions": recent_submissions,
+    }
+    return render(request, "main/analytics.html", context)
