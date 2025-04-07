@@ -40,11 +40,12 @@ def login_view(request):
 
     return render(request, "main/login.html")
 
-def form_page(request):
+
+def form_page(request, account_id=None):
+    # Batch data (existing logic preserved)
     batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
     
     batch_data = {}
-
     for record in batch_records:
         year_range = f"{record['from_year']} - {record['to_year']}"
         batch_id = record["id"]
@@ -52,11 +53,24 @@ def form_page(request):
 
         if year_range not in batch_data:
             batch_data[year_range] = []
-        batch_data[year_range].append({"id": batch_id, "type": batch_type})  # Store batch_id & batch_type together
+        batch_data[year_range].append({"id": batch_id, "type": batch_type})
+
+    # Graduate info
+    graduate_data = None
+    if account_id:
+        account = get_object_or_404(Account, id=account_id)
+        graduate = account.graduate  # ForeignKey to Graduate
+        graduate_data = {
+            "full_name": f"{graduate.first_name} {graduate.middle_name or ''} {graduate.last_name}".strip(),
+            "mobile_number": graduate.contact,
+            "address": graduate.address
+        }
 
     context = {
-        "batch_years": batch_data  # Now a dictionary containing batch IDs
+        "batch_years": batch_data,
+        "graduate_data": graduate_data
     }
+
     return render(request, "main/form.html", context)
 
 @login_required

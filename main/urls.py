@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.landing_page, name='landing_page'),  # Login view
     path('login/', views.login_view, name='login'),  # Login view
+    path('form/<int:account_id>/', views.form_page, name='form_page'),
     path("form/", views.form_page, name="form_page"),
     path('dashboard/', views.dashboard_view, name='dashboard'),  # Dashboard view
     path('configure/', views.configure, name='configure'),  # Batch management view
