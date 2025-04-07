@@ -16,68 +16,141 @@
 
 {% block content %}
 <div class="row">
-  <!-- Card for Total Batches -->
+  <!-- Total Batches -->
   <div class="col-lg-3 col-6">
     <div class="small-box bg-success">
       <div class="inner">
-        <h3>12</h3>
+        <h3>{{ total_batches }}</h3>
         <p>Total Batches</p>
       </div>
-      <div class="icon">
-        <i class="fas fa-layer-group"></i>
-      </div>
-      <a href="#" class="small-box-footer">
-        View All Batches <i class="fas fa-arrow-circle-right"></i>
-      </a>
+      <div class="icon"><i class="fas fa-layer-group"></i></div>
+      <a href="{% url 'configure' %}" class="small-box-footer">View All Batches <i class="fas fa-arrow-circle-right"></i></a>
     </div>
   </div>
-  
-  <!-- Card for Total Graduates -->
+
+  <!-- Total Graduates -->
   <div class="col-lg-3 col-6">
     <div class="small-box bg-info">
       <div class="inner">
-        <h3>500</h3>
+        <h3>{{ total_graduates }}</h3>
         <p>Total Graduates</p>
       </div>
-      <div class="icon">
-        <i class="fas fa-user-graduate"></i>
-      </div>
-      <a href="#" class="small-box-footer">
-        View All Graduates <i class="fas fa-arrow-circle-right"></i>
-      </a>
+      <div class="icon"><i class="fas fa-user-graduate"></i></div>
+      <a href="#" class="small-box-footer">View All Graduates <i class="fas fa-arrow-circle-right"></i></a>
     </div>
   </div>
-  
-  <!-- Card for Current Batch -->
+
+  <!-- Current Batch -->
   <div class="col-lg-3 col-6">
     <div class="small-box bg-warning">
       <div class="inner">
-        <h3>2025</h3>
+        <h3>{{ current_batch }}</h3>
         <p>Current Batch</p>
       </div>
-      <div class="icon">
-        <i class="fas fa-calendar"></i>
-      </div>
-      <a href="#" class="small-box-footer">
-        View Batch Details <i class="fas fa-arrow-circle-right"></i>
-      </a>
+      <div class="icon"><i class="fas fa-calendar"></i></div>
+      <a href="#" class="small-box-footer">View Batch Details <i class="fas fa-arrow-circle-right"></i></a>
     </div>
   </div>
-  
-  <!-- Card for Total Records -->
+
+  <!-- Total Records -->
   <div class="col-lg-3 col-6">
     <div class="small-box bg-danger">
       <div class="inner">
-        <h3>2000</h3>
+        <h3>{{ total_records }}</h3>
         <p>Total Records</p>
       </div>
-      <div class="icon">
-        <i class="fas fa-folder-open"></i>
-      </div>
-      <a href="#" class="small-box-footer">
-        View All Records <i class="fas fa-arrow-circle-right"></i>
-      </a>
+      <div class="icon"><i class="fas fa-folder-open"></i></div>
+      <a href="#" class="small-box-footer">View All Records <i class="fas fa-arrow-circle-right"></i></a>
     </div>
   </div>
 </div>
+
+<!-- Chart Section -->
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-gradient-primary text-white">
+        <h5 class="mb-0">Submissions by Batch</h5>
+      </div>
+      <div class="card-body">
+        <canvas id="batchChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-gradient-info text-white">
+        <h5 class="mb-0">Submission Status Overview</h5>
+      </div>
+      <div class="card-body">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Submissions -->
+<div class="card mt-4">
+  <div class="card-header bg-gradient-secondary text-white">
+    <h5 class="mb-0">Recent Submissions</h5>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-striped table-hover m-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Batch</th>
+          <th>Status</th>
+          <th>Date Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in recent_submissions %}
+        <tr>
+          <td>{{ entry.graduate.full_name }}</td>
+          <td>{{ entry.graduate.batch }}</td>
+          <td><span class="badge badge-{% if entry.status == 'pending' %}warning{% elif entry.status == 'approved' %}success{% else %}danger{% endif %}">{{ entry.status|title }}</span></td>
+          <td>{{ entry.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center">No recent submissions found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const batchChart = new Chart(document.getElementById('batchChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ batch_labels|safe }},
+      datasets: [{
+        label: 'Submissions',
+        data: {{ batch_counts|safe }},
+        backgroundColor: '#007bff'
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  const statusChart = new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Pending', 'Approved', 'Rejected'],
+      datasets: [{
+        data: {{ status_counts|safe }},
+        backgroundColor: ['#ffc107', '#28a745', '#dc3545']
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+</script>
 {% endblock %}

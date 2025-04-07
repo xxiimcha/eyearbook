@@ -112,15 +112,50 @@ def form_page(request, account_id=None):
 
     return render(request, "main/form.html", context)
 
+
 @login_required
 def dashboard_view(request):
+    # Total counts
+    total_batches = Batch.objects.count()
+    total_graduates = Graduate.objects.count()
+    total_records = Yearbook.objects.count()
+
+    # Get most recent batch
+    latest_batch = Batch.objects.order_by('-to_year').first()
+    current_batch = f"{latest_batch.from_year}-{latest_batch.to_year}" if latest_batch else "N/A"
+
+    # Recent submissions
+    recent_submissions = Yearbook.objects.select_related('graduate').order_by('-id')[:5]
+
+    # Submissions per batch (bar chart)
+    batch_data = (
+        Yearbook.objects
+        .values('graduate__batch__from_year', 'graduate__batch__to_year')
+        .annotate(count=Count('id'))
+        .order_by('graduate__batch__from_year')
+    )
+
+    batch_labels = [f"{b['graduate__batch__from_year']}-{b['graduate__batch__to_year']}" for b in batch_data]
+    batch_counts = [b['count'] for b in batch_data]
+
+    # Status pie chart
+    status_labels = ['pending', 'approved', 'rejected']
+    status_counts = [
+        Yearbook.objects.filter(status=label).count()
+        for label in status_labels
+    ]
+
     context = {
-        "total_batches": 12,
-        "total_graduates": 2500,
-        "current_batch": "2025",
-        "total_records": 3000,
+        "total_batches": total_batches,
+        "total_graduates": total_graduates,
+        "total_records": total_records,
+        "current_batch": current_batch,
+        "recent_submissions": recent_submissions,
+        "batch_labels": json.dumps(batch_labels),
+        "batch_counts": json.dumps(batch_counts),
+        "status_counts": json.dumps(status_counts),
     }
-    return render(request, 'main/dashboard.html')
+    return render(request, 'main/dashboard.html', context)
 
 def configure(request):
     if request.method == 'POST':
