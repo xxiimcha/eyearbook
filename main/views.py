@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Batch, Graduate, Account
+from .models import Batch, Graduate, Account,  Yearbook
 from itertools import groupby
 from .forms import BatchForm, GraduateForm, GraduateEditForm
 from django.http import JsonResponse
@@ -13,6 +13,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 import bcrypt
+import json
 from django.contrib.auth import get_user_model  # Import this
 
 def landing_page(request):
@@ -42,33 +43,78 @@ def login_view(request):
 
 
 def form_page(request, account_id=None):
-    # Batch data (existing logic preserved)
+    # Fetch batch data
     batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
-    
     batch_data = {}
+
     for record in batch_records:
         year_range = f"{record['from_year']} - {record['to_year']}"
         batch_id = record["id"]
         batch_type = record["batch_type"]
-
         if year_range not in batch_data:
             batch_data[year_range] = []
         batch_data[year_range].append({"id": batch_id, "type": batch_type})
 
-    # Graduate info
     graduate_data = None
+    graduate = None
+
     if account_id:
         account = get_object_or_404(Account, id=account_id)
-        graduate = account.graduate  # ForeignKey to Graduate
+        graduate = account.graduate
         graduate_data = {
             "full_name": f"{graduate.first_name} {graduate.middle_name or ''} {graduate.last_name}".strip(),
             "mobile_number": graduate.contact,
             "address": graduate.address
         }
 
+    # Handle form submission
+    if request.method == "POST":
+        civil_status = request.POST.get("civil_status")
+        birthday = request.POST.get("birthday")
+        region = request.POST.get("region")
+        sex = request.POST.get("sex")
+        honors = request.POST.get("honors")
+        grad_reasons = request.POST.getlist("grad_reasons")
+        other_reason = request.POST.get("other_reason", "")
+        employment_status = request.POST.get("employment_status")
+        job_title = request.POST.get("job_title")
+        company_name = request.POST.get("company_name")
+        income = request.POST.get("income")
+        agreed = bool(request.POST.get("data_privacy"))
+
+        if graduate:
+            # Save to Yearbook model
+            Yearbook.objects.create(
+                graduate=graduate,
+                civil_status=civil_status,
+                birthday=birthday,
+                region=region,
+                sex=sex,
+                honors=honors,
+                grad_reasons=json.dumps(grad_reasons),
+                other_reason=other_reason,
+                employment_status=employment_status,
+                job_title=job_title,
+                company_name=company_name,
+                income=income,
+                agreed_to_privacy=agreed
+            )
+            return redirect('form_page_success')  # Make sure this view/template exists
+
+        # fallback if graduate not found
+        context = {
+            "batch_years": batch_data,
+            "graduate_data": graduate_data,
+            "account_id": account_id,
+            "error": "Graduate not found or data incomplete."
+        }
+        return render(request, "main/form.html", context)
+
+    # GET request (form display)
     context = {
         "batch_years": batch_data,
-        "graduate_data": graduate_data
+        "graduate_data": graduate_data,
+        "account_id": account_id 
     }
 
     return render(request, "main/form.html", context)
@@ -171,6 +217,9 @@ def add_graduate(request, batch_id):
     
     # Render the add graduate form
     return render(request, 'main/graduates/add_graduate.html', {'batch': batch})
+
+def form_page_success(request):
+    return render(request, 'main/form_success.html')  # You can name the template anything
 
 def edit_graduate(request, pk):
     graduate = get_object_or_404(Graduate, pk=pk)

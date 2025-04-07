@@ -11,7 +11,8 @@
                     <h4 class="mb-0 text-center">Registration Form</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{% url 'form_page' %}">
+                    <form method="POST" action="{% if account_id %}{% url 'form_page' account_id %}{% else %}{% url 'form_page' %}{% endif %}">
+
                         {% csrf_token %}
 
                         <!-- Personal Information Section -->

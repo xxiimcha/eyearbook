@@ -8,6 +8,7 @@ class Batch(models.Model):
     def __str__(self):
         return f"{self.from_year}-{self.to_year} ({self.batch_type})"
 
+
 class Graduate(models.Model):
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
@@ -23,6 +24,7 @@ class Graduate(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+
 class Account(models.Model):
     graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE)  # One-to-One relationship with Graduate
     public_key = models.TextField()  # Public Key
@@ -30,3 +32,27 @@ class Account(models.Model):
 
     def __str__(self):
         return f"Account for {self.graduate.first_name} {self.graduate.last_name}"
+class Yearbook(models.Model):
+    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE)
+
+    civil_status = models.CharField(max_length=20)
+    birthday = models.DateField()
+    region = models.CharField(max_length=100)
+    sex = models.CharField(max_length=20)
+
+    honors = models.CharField(max_length=255, blank=True, null=True)
+    grad_reasons = models.TextField(blank=True, null=True)
+    other_reason = models.CharField(max_length=255, blank=True, null=True)
+
+    employment_status = models.CharField(max_length=30)
+    job_title = models.CharField(max_length=100, blank=True, null=True)
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    income = models.CharField(max_length=100, blank=True, null=True)
+
+    agreed_to_privacy = models.BooleanField(default=False)
+
+    # ✅ New field
+    status = models.CharField(max_length=20, default='Pending')
+
+    def __str__(self):
+        return f"Yearbook Entry for {self.graduate.first_name} {self.graduate.last_name}"
