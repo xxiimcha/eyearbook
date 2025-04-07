@@ -62,7 +62,7 @@
                         </div>
                     </td>
                     <td>
-                        <button class="btn btn-info" data-toggle="modal" data-target="#detailsModal-{{ account.id }}" onclick="generateQRCode('{{ account.public_key }}', '{{ account.id }}')">
+                        <button class="btn btn-info" data-toggle="modal" data-target="#detailsModal-{{ account.id }}" onclick="generateQRCode('{{ account.id }}')">
                             <i class="fas fa-qrcode"></i> View Details
                         </button>
                     </td>
@@ -80,8 +80,8 @@
                             </div>
                             <div class="modal-body">
                                 <h5><strong>Graduate Name:</strong> {{ account.graduate.first_name }} {{ account.graduate.last_name }}</h5>
-                                <p><strong>Public Key:</strong> {{ account.public_key }}</p>
-                                <p><strong>Private Key:</strong> {{ account.private_key }}</p>
+                                <p style="white-space: pre-wrap;"><strong>Public Key:</strong> {{ account.public_key }}</p>
+                                <p style="white-space: pre-wrap;"><strong>Private Key:</strong> {{ account.private_key }}</p>
                                 <div class="text-center">
                                     <h5>QR Code:</h5>
                                     <div id="qrCodeContainer-{{ account.id }}"></div>
@@ -100,16 +100,16 @@
 </div>
 
 {% include 'includes/foot.html' %}
+
+<!-- QR Code JS and custom script -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Initialize DataTable
         $('#accountTable').DataTable({
             responsive: true,
             autoWidth: false
         });
 
-        // Initialize Bootstrap tooltips
         $('[data-toggle="tooltip"]').tooltip();
     });
 
@@ -126,28 +126,22 @@
     }
 
     function generateQRCode(accountId) {
-        console.log("Fetching QR Code URL for Account ID:", accountId);
+        console.log("Generating QR Code for Account ID:", accountId);
 
-        fetch(`/get_qr_code/${accountId}/`)  // Pass account ID, NOT public key
-            .then(response => response.json())
-            .then(data => {
-                console.log("Generated Short QR Code URL:", data.qr_url);
-                
-                const qrContainer = document.getElementById(`qrCodeContainer-${accountId}`);
-                qrContainer.innerHTML = ""; // Clear previous QR code
+        const qrContainer = document.getElementById(`qrCodeContainer-${accountId}`);
+        qrContainer.innerHTML = ""; // Clear previous QR code
 
-                QRCode.toCanvas(qrContainer, data.qr_url, function (error) {
-                    if (error) {
-                        console.error("QR Code Generation Error:", error);
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("Error fetching QR Code data:", error);
-            });
+        const baseUrl = window.location.origin;
+        const qrUrl = `${baseUrl}/form/${accountId}/`;
+
+        QRCode.toCanvas(document.createElement("canvas"), qrUrl, function (error, canvas) {
+            if (error) {
+                console.error("QR Code Generation Error:", error);
+                return;
+            }
+            qrContainer.appendChild(canvas);
+        });
     }
-
-
 </script>
 
 <style>
@@ -167,9 +161,6 @@
     }
     .modal .modal-body {
         word-break: break-word;
-    }
-    .modal .modal-body #qrCodeContainer {
-        margin: auto;
     }
 </style>
 {% endblock %}
