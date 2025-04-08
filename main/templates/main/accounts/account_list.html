@@ -75,52 +75,63 @@
                         </button>
                     </td>
                 </tr>
-
                 <!-- Modal -->
                 <div class="modal fade" id="detailsModal-{{ account.id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel-{{ account.id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content border-primary">
                             <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title" id="detailsModalLabel-{{ account.id }}">Account Details</h5>
+                                <h5 class="modal-title" id="detailsModalLabel-{{ account.id }}">Graduate Account Details</h5>
                                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body p-4">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card border-info shadow-sm">
-                                            <div class="card-body">
-                                                <h6 class="card-subtitle mb-2 text-muted">Graduate Name</h6>
-                                                <p class="card-text font-weight-bold">{{ account.graduate.first_name }} {{ account.graduate.last_name }}</p>
-                                            </div>
+                                    <!-- Left Column -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Name</h6>
+                                            <p class="mb-0"><strong>{{ account.graduate.first_name }} {{ account.graduate.middle_name }} {{ account.graduate.last_name }}</strong></p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Course</h6>
+                                            <p class="mb-0">{{ account.graduate.course }}</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Email</h6>
+                                            <p class="mb-0">{{ account.graduate.email }}</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Contact Number</h6>
+                                            <p class="mb-0">{{ account.graduate.contact }}</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Address</h6>
+                                            <p class="mb-0">{{ account.graduate.address }}</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Batch</h6>
+                                            <p class="mb-0">{{ account.graduate.batch.from_year }} - {{ account.graduate.batch.to_year }} ({{ account.graduate.batch.batch_type }})</p>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <div class="card border-success shadow-sm">
-                                            <div class="card-body">
-                                                <h6 class="card-subtitle mb-2 text-muted">Public Key</h6>
-                                                <p class="card-text" style="white-space: pre-wrap;">{{ account.public_key }}</p>
+                                    <!-- Right Column -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Public Key</h6>
+                                            <div class="bg-light p-2 rounded" style="max-height: 150px; overflow-y: auto;">
+                                                <code style="white-space: pre-wrap;">{{ account.public_key }}</code>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-12 mb-3">
-                                        <div class="card border-warning shadow-sm">
-                                            <div class="card-body">
-                                                <h6 class="card-subtitle mb-2 text-muted">Private Key</h6>
-                                                <p class="card-text" style="white-space: pre-wrap;">{{ account.private_key }}</p>
+                                        <div class="mb-3">
+                                            <h6 class="text-muted">Private Key</h6>
+                                            <div class="bg-warning p-2 rounded" style="max-height: 150px; overflow-y: auto;">
+                                                <code style="white-space: pre-wrap;">{{ account.private_key }}</code>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-12 text-center">
-                                        <div class="card border-dark shadow-sm">
-                                            <div class="card-body">
-                                                <h5 class="card-title">QR Code</h5>
-                                                <div id="qrCodeContainer-{{ account.id }}"></div>
-                                            </div>
+                                        <div class="mb-3 text-center">
+                                            <h6 class="text-muted">QR Code</h6>
+                                            <div id="qrCodeContainer-{{ account.id }}"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -131,6 +142,7 @@
                         </div>
                     </div>
                 </div>
+
                 {% endfor %}
             </tbody>
         </table>

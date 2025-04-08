@@ -6,6 +6,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.landing_page, name='landing_page'),  # Login view
     path('login/', views.login_view, name='login'),  # Login view
+    
+    path('student-login/', views.student_login_view, name='student_login'),
+    path('api/get-encrypted-challenge/', views.get_encrypted_challenge, name='get_encrypted_challenge'),
+
     path('form/<int:account_id>/', views.form_page, name='form_page'),
     path('form/success/', views.form_page_success, name='form_page_success'),
     path("form/", views.form_page, name="form_page"),

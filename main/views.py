@@ -22,6 +22,48 @@ def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
 
 
+def student_login_view(request):
+    if request.method == "GET":
+        return render(request, 'main/student_login.html')
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+        decrypted_text = request.POST.get('decrypted_text')
+
+        try:
+            account = Account.objects.select_related('graduate').get(graduate__email=email)
+        except Account.DoesNotExist:
+            messages.error(request, "Email not found.")
+            return redirect('student_login')
+
+        # Compare decrypted text with stored challenge
+        if decrypted_text == request.session.get('challenge'):
+            request.session['student_id'] = account.graduate.id
+            return redirect('student_dashboard')  # or wherever they should go
+        else:
+            messages.error(request, "Authentication failed. Invalid private key.")
+            return redirect('student_login')
+        
+        
+def get_encrypted_challenge(request):
+    email = request.GET.get('email')
+    try:
+        account = Account.objects.select_related('graduate').get(graduate__email=email)
+        pubkey_pem = f"-----BEGIN PUBLIC KEY-----\n{account.public_key}\n-----END PUBLIC KEY-----"
+        public_key = serialization.load_pem_public_key(pubkey_pem.encode())
+
+        challenge = base64.b64encode(os.urandom(32)).decode()
+        encrypted = public_key.encrypt(
+            challenge.encode(),
+            padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(), label=None)
+        )
+        request.session['challenge'] = challenge  # Store plain challenge in session
+
+        return JsonResponse({'encrypted': base64.b64encode(encrypted).decode()})
+
+    except Account.DoesNotExist:
+        return JsonResponse({'error': 'Invalid email'}, status=400)
+    
 User = get_user_model()  # Get the User model
 
 def login_view(request):

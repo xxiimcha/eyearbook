@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h4>Graduate Login</h4>
+                </div>
+                <div class="card-body">
+                    <form id="rsaLoginForm" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="email">Registered Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="private_key">Upload RSA Private Key (PEM)</label>
+                            <input type="file" class="form-control-file" name="private_key" required>
+                        </div>
+                        <input type="hidden" name="decrypted_text" id="decrypted_text">
+                        <button type="submit" class="btn btn-success btn-block">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
