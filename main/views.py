@@ -364,3 +364,64 @@ def analytics_view(request):
         "recent_submissions": recent_submissions,
     }
     return render(request, "main/analytics.html", context)
+
+
+def add_student_view(request):
+    batches = Batch.objects.all()
+
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.POST.get('first_name')
+        middle_name = request.POST.get('middle_name') or ''
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        contact = request.POST.get('contact')
+        address = request.POST.get('address')
+        course = request.POST.get('course')
+        ambition = request.POST.get('ambition', '')
+        photo = request.FILES.get('photo')
+        batch_id = request.POST.get('batch_id')
+
+        batch = get_object_or_404(Batch, id=batch_id)
+
+        # Save Graduate
+        graduate = Graduate.objects.create(
+            first_name=first_name,
+            middle_name=middle_name,
+            last_name=last_name,
+            email=email,
+            contact=contact,
+            address=address,
+            course=course,
+            ambition=ambition,
+            photo=photo,
+            batch=batch
+        )
+
+        # Generate RSA keys
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=1024)
+        private_key_pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+        public_key = private_key.public_key()
+        public_key_pem = public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+
+        # Clean public key for storage
+        public_key_clean = public_key_pem.decode().replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "").replace("\n", "")
+        hashed_private_key = bcrypt.hashpw(private_key_pem, bcrypt.gensalt()).decode()
+
+        # Save Account
+        Account.objects.create(
+            graduate=graduate,
+            public_key=public_key_clean,
+            private_key=hashed_private_key
+        )
+
+        return redirect('account_list')
+
+    return render(request, 'main/accounts/add_student.html', {'batches': batches})
