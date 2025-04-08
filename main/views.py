@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 import bcrypt
 import json
+import csv
 from django.contrib.auth import get_user_model  # Import this
 
 def landing_page(request):
@@ -425,3 +426,50 @@ def add_student_view(request):
         return redirect('account_list')
 
     return render(request, 'main/accounts/add_student.html', {'batches': batches})
+
+
+def import_student_view(request):
+    if request.method == "POST":
+        csv_file = request.FILES.get("csv_file")
+
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, "Please upload a valid CSV file.")
+            return redirect("import_student")
+
+        decoded_file = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded_file)
+
+        for row in reader:
+            graduate = Graduate.objects.create(
+                first_name=row['first_name'],
+                middle_name=row.get('middle_name', ''),
+                last_name=row['last_name'],
+                course=row['course'],
+                email=row['email'],
+                contact=row['contact'],
+                address=row['address'],
+                batch_id=row['batch_id'],
+            )
+
+            private_key = rsa.generate_private_key(public_exponent=65537, key_size=1024)
+            private_key_pem = private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.NoEncryption()
+            )
+            public_key = private_key.public_key()
+            public_key_pem = public_key.public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            )
+
+            Account.objects.create(
+                graduate=graduate,
+                public_key=public_key_pem.decode(),
+                private_key=bcrypt.hashpw(private_key_pem, bcrypt.gensalt()).decode()
+            )
+
+        messages.success(request, "Students successfully imported.")
+        return redirect("account_list")
+
+    return render(request, "main/accounts/import_student.html")

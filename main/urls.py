@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', views.account_list, name='account_list'),
     path('accounts/add-student/', views.add_student_view, name='add_student'),
     path('get_qr_code/<int:account_id>/', views.get_qr_code_data, name='view_public_key'),
+    path('accounts/import/', views.import_student_view, name='import_student'),
 
     # Yearbook Module
     path('yearbook/', views.select_batch, name='select_batch'),

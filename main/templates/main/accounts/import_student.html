@@ -1,0 +1,15 @@
+{% extends 'base-admin.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Import Students from CSV</h4>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Select CSV File</label>
+            <input type="file" name="csv_file" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Import</button>
+    </form>
+</div>
+{% endblock %}
