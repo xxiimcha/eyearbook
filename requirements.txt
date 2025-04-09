@@ -3,3 +3,5 @@ cryptography==41.0.3
 Django==5.1.4
 pillow==10.0.0
 qrcode==7.3.1
+gunicorn==21.2.0       # Required for running Django on Render
+whitenoise==6.6.0      # To serve static files
