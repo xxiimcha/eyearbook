@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-gq3t)=56=7_81(mx_434pdn0!%wtef=*mn(_@86erw95do&#4#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://eyearbook.onrender.com']
+ALLOWED_HOSTS = ['eyearbook.onrender.com']
 
 # Application definition
 
