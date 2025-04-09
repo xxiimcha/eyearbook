@@ -50,6 +50,17 @@
             <p>Analytics</p>
           </a>
         </li>
+        
+        <!-- Logout Button (POST) -->
+        <li class="nav-item mt-3">
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="nav-link btn btn-link text-left w-100" style="color: #e8f5e9;">
+              <i class="nav-icon fas fa-sign-out-alt"></i>
+              <p class="d-inline">Logout</p>
+            </button>
+          </form>
+        </li>
       </ul>
     </nav>
   </div>

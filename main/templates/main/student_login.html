@@ -1,26 +1,28 @@
 {% extends 'base.html' %}
+{% block title %}Student Login - eYearbook{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8 col-lg-6">
             <div class="card shadow">
                 <div class="card-header bg-success text-white text-center">
-                    <h4>Graduate Login</h4>
+                    <h4 class="mb-0">Graduate Login</h4>
                 </div>
                 <div class="card-body">
-                    <form id="rsaLoginForm" method="POST" enctype="multipart/form-data">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endif %}
+
+                    <form method="POST">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label for="email">Registered Email</label>
-                            <input type="email" class="form-control" name="email" required>
+                            <label for="private_key">Paste Your RSA Private Key</label>
+                            <textarea name="private_key" id="private_key" class="form-control" rows="8" required placeholder="-----BEGIN RSA PRIVATE KEY-----\n..."></textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="private_key">Upload RSA Private Key (PEM)</label>
-                            <input type="file" class="form-control-file" name="private_key" required>
-                        </div>
-                        <input type="hidden" name="decrypted_text" id="decrypted_text">
-                        <button type="submit" class="btn btn-success btn-block">Login</button>
+                        <button type="submit" class="btn btn-success btn-block mt-3">
+                            <i class="fas fa-unlock"></i> Login
+                        </button>
                     </form>
                 </div>
             </div>

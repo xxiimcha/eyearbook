@@ -21,30 +21,26 @@ from django.contrib.auth import get_user_model  # Import this
 def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
 
-
 def student_login_view(request):
-    if request.method == "GET":
-        return render(request, 'main/student_login.html')
+    error = None
 
-    if request.method == "POST":
-        email = request.POST.get('email')
-        decrypted_text = request.POST.get('decrypted_text')
+    if request.method == 'POST':
+        pasted_key = request.POST.get('private_key', '').encode()
 
-        try:
-            account = Account.objects.select_related('graduate').get(graduate__email=email)
-        except Account.DoesNotExist:
-            messages.error(request, "Email not found.")
-            return redirect('student_login')
-
-        # Compare decrypted text with stored challenge
-        if decrypted_text == request.session.get('challenge'):
-            request.session['student_id'] = account.graduate.id
-            return redirect('student_dashboard')  # or wherever they should go
+        if not pasted_key:
+            error = "Please paste your RSA private key."
         else:
-            messages.error(request, "Authentication failed. Invalid private key.")
-            return redirect('student_login')
-        
-        
+            # Loop through accounts and check the hashed private keys
+            for account in Account.objects.all():
+                if bcrypt.checkpw(pasted_key, account.private_key.encode()):
+                    # Set session or cookie
+                    request.session['account_id'] = account.id
+                    return redirect('form_page', account_id=account.id)
+
+            error = "Invalid RSA Private Key."
+
+    return render(request, 'main/student_login.html', {'error': error})
+
 def get_encrypted_challenge(request):
     email = request.GET.get('email')
     try:

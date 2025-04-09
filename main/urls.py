@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.landing_page, name='landing_page'),  # Login view
@@ -12,7 +13,6 @@ urlpatterns = [
 
     path('form/<int:account_id>/', views.form_page, name='form_page'),
     path('form/success/', views.form_page_success, name='form_page_success'),
-    path("form/", views.form_page, name="form_page"),
     path('dashboard/', views.dashboard_view, name='dashboard'),  # Dashboard view
     path('configure/', views.configure, name='configure'),  # Batch management view
     path('update-batch/<int:batch_id>/', views.update_batch, name='update_batch'),  # Update batch
@@ -38,6 +38,9 @@ urlpatterns = [
     path('yearbook/<int:from_year>/<int:to_year>/<str:course>/graduates/', views.course_graduates, name='course_graduates'),
 
     path('analytics/', views.analytics_view, name='analytics'),
+
+    # Logout function
+    path('logout/', auth_views.LogoutView.as_view(next_page='student_login'), name='logout'),
 ]
 
 
