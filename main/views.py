@@ -18,6 +18,8 @@ import json
 import csv
 from django.contrib.auth import get_user_model  # Import this
 from collections import defaultdict
+from django.core.mail import send_mail
+from django.conf import settings
 
 def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
@@ -466,6 +468,36 @@ def add_student_view(request):
             graduate=graduate,
             public_key=public_key_clean,
             private_key=hashed_private_key
+        )
+
+        # ✅ Send RSA keys via email
+        subject = 'Your eYearbook Access Keys'
+        message = f"""
+Hello {first_name} {last_name},
+
+Thank you for registering in the eYearbook system.
+
+Below are your RSA access keys. Keep them safe:
+
+------------------------------
+🔑 Public Key:
+{public_key_pem.decode()}
+
+🔒 Private Key:
+{private_key_pem.decode()}
+------------------------------
+
+The private key is confidential and will be required for secure access.
+
+Best regards,
+eYearbook Admin Team
+"""
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False
         )
 
         return redirect('account_list')
