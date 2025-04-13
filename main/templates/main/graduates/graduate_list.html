@@ -51,34 +51,41 @@
         <div class="tab-content">
           {% for course, grads in course_group.items %}
           <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="course-{{ batch.id }}-{{ forloop.counter }}" role="tabpanel">
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Contact</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for graduate in grads %}
-                <tr>
-                  <td>{{ graduate.id }}</td>
-                  <td>{{ graduate.first_name }} {{ graduate.last_name }}</td>
-                  <td>{{ graduate.email }}</td>
-                  <td>{{ graduate.contact }}</td>
-                  <td>
-                    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewModal"
-                      onclick="viewGraduate('{{ graduate.id }}', '{{ graduate.first_name }}', '{{ graduate.middle_name }}', '{{ graduate.last_name }}', '{{ graduate.course }}', '{{ graduate.email }}', '{{ graduate.contact }}', '{{ graduate.address }}', '{% if graduate.photo %}{{ graduate.photo.url }}{% else %}https://via.placeholder.com/200{% endif %}', 'Batch: {{ batch.from_year }} - {{ batch.to_year }} ({{ batch.batch_type }})')">
-                      <i class="fas fa-eye"></i> View
-                    </button>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+            {% if grads %}
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for graduate in grads %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ graduate.first_name }} {{ graduate.last_name }}</td>
+                    <td>{{ graduate.email }}</td>
+                    <td>{{ graduate.contact }}</td>
+                    <td>
+                      <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewModal"
+                        onclick="viewGraduate('{{ graduate.id }}', '{{ graduate.first_name }}', '{{ graduate.middle_name }}', '{{ graduate.last_name }}', '{{ graduate.course }}', '{{ graduate.email }}', '{{ graduate.contact }}', '{{ graduate.address }}', '{% if graduate.photo %}{{ graduate.photo.url }}{% else %}https://via.placeholder.com/200{% endif %}', 'Batch: {{ batch.from_year }} - {{ batch.to_year }} ({{ batch.batch_type }})')">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="alert alert-warning text-center m-0">
+                No graduates available for this course.
+              </div>
+            {% endif %}
           </div>
+          
           {% endfor %}
         </div>
       </div>
