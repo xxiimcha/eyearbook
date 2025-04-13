@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3>Welcome, {{ graduate.first_name }} {{ graduate.last_name }}</h3>
+  <p><strong>Course:</strong> {{ graduate.course }}</p>
+  <p><strong>Batch:</strong> {{ graduate.batch.from_year }} - {{ graduate.batch.to_year }} ({{ graduate.batch.batch_type }})</p>
+  <hr>
+
+  <h4>🎓 Batchmates by Course</h4>
+  {% for course, grads in grads_by_course.items %}
+    <div class="card my-3">
+      <div class="card-header bg-success text-white">
+        {{ course }}
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for g in grads %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ g.first_name }} {{ g.last_name }}
+            <span class="badge badge-secondary">{{ g.email }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
