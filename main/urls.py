@@ -9,6 +9,8 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),  # Login view
     
     path('student-login/', views.student_login_view, name='student_login'),
+    
+    path('profile/<int:account_id>/', views.profile_view, name='profile_page'),
     path('api/get-encrypted-challenge/', views.get_encrypted_challenge, name='get_encrypted_challenge'),
 
     path('form/<int:account_id>/', views.form_page, name='form_page'),

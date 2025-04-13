@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Graduate Profile - eYearbook{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Graduate Profile</h4>
+                </div>
+                <div class="card-body">
+                    {% if photo_url %}
+                        <div class="text-center mb-3">
+                            <img src="{{ photo_url }}" class="img-thumbnail" width="150" height="150" alt="Graduate Photo">
+                        </div>
+                    {% endif %}
+                    <p><strong>Full Name:</strong> {{ graduate.first_name }} {{ graduate.middle_name }} {{ graduate.last_name }}</p>
+                    <p><strong>Email:</strong> {{ graduate.email }}</p>
+                    <p><strong>Contact:</strong> {{ graduate.contact }}</p>
+                    <p><strong>Address:</strong> {{ graduate.address }}</p>
+                    <p><strong>Course:</strong> {{ graduate.course }}</p>
+                    <p><strong>Ambition:</strong> {{ graduate.ambition|default:"None" }}</p>
+                    <p><strong>Batch:</strong> {{ batch }}</p>
+                </div>
+            </div>
+
+            {% if batchmates %}
+            <hr class="my-4">
+            <h5 class="text-center mb-3 text-secondary">Other Yearbook Entries from Your Batch</h5>
+            <div class="row">
+                {% for mate in batchmates %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border border-light shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ mate.first_name }} {{ mate.middle_name }} {{ mate.last_name }}</h6>
+                            <p class="mb-1"><strong>Course:</strong> {{ mate.course }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ mate.email }}</p>
+                            <p class="mb-1"><strong>Honors:</strong> {{ mate.yearbook.honors|default:"—" }}</p>
+                            <p class="mb-1"><strong>Ambition:</strong> {{ mate.ambition|default:"—" }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <hr class="my-4">
+            <p class="text-center text-muted">No other graduates in your batch have submitted their yearbook information yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

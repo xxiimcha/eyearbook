@@ -24,25 +24,54 @@ from django.conf import settings
 def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
 
+def normalize_key(key):
+    # Remove carriage returns and extra whitespace for consistent comparison
+    return '\n'.join([line.strip() for line in key.replace('\r', '').strip().splitlines() if line.strip()])
+
+
 def student_login_view(request):
     error = None
 
     if request.method == 'POST':
-        pasted_key = request.POST.get('private_key', '').encode()
+        pasted_key = request.POST.get('private_key', '')
 
-        if not pasted_key:
+        if not pasted_key.strip():
             error = "Please paste your RSA private key."
         else:
-            # Loop through accounts and check the hashed private keys
-            for account in Account.objects.all():
-                if bcrypt.checkpw(pasted_key, account.private_key.encode()):
-                    # Set session or cookie
+            pasted_clean = normalize_key(pasted_key)
+
+            for account in Account.objects.select_related('graduate').all():
+                db_key = normalize_key(account.private_key)
+
+                if pasted_clean == db_key:
                     request.session['account_id'] = account.id
-                    return redirect('form_page', account_id=account.id)
+                    request.session['graduate_id'] = account.graduate.id
+                    return redirect('profile_page', account_id=account.id)
 
             error = "Invalid RSA Private Key."
 
     return render(request, 'main/student_login.html', {'error': error})
+
+def profile_view(request, account_id):
+    account = get_object_or_404(Account.objects.select_related('graduate__batch'), id=account_id)
+    graduate = account.graduate
+    batch = graduate.batch
+
+    # Get batchmates (with yearbook submissions)
+    batchmates = (
+        Graduate.objects.filter(batch=batch)
+        .filter(yearbook__isnull=False)
+        .select_related("yearbook")
+        .exclude(id=graduate.id)
+    )
+
+    context = {
+        "graduate": graduate,
+        "batch": f"{batch.from_year}-{batch.to_year} ({batch.batch_type})",
+        "photo_url": graduate.photo.url if graduate.photo else None,
+        "batchmates": batchmates,
+    }
+    return render(request, "main/profile_page.html", context)
 
 def get_encrypted_challenge(request):
     email = request.GET.get('email')
@@ -504,7 +533,6 @@ eYearbook Admin Team
 
     return render(request, 'main/accounts/add_student.html', {'batches': batches})
 
-
 def import_student_view(request):
     if request.method == "POST":
         csv_file = request.FILES.get("csv_file")
@@ -516,7 +544,18 @@ def import_student_view(request):
         decoded_file = csv_file.read().decode('utf-8').splitlines()
         reader = csv.DictReader(decoded_file)
 
-        for row in reader:
+        imported = 0
+        skipped = []
+
+        for index, row in enumerate(reader, start=1):
+            batch_id = row.get('batch_id')
+
+            try:
+                batch = Batch.objects.get(id=batch_id)
+            except Batch.DoesNotExist:
+                skipped.append(f"Row {index} skipped (batch_id {batch_id} does not exist).")
+                continue
+
             graduate = Graduate.objects.create(
                 first_name=row['first_name'],
                 middle_name=row.get('middle_name', ''),
@@ -525,9 +564,10 @@ def import_student_view(request):
                 email=row['email'],
                 contact=row['contact'],
                 address=row['address'],
-                batch_id=row['batch_id'],
+                batch=batch,
             )
 
+            # RSA key generation (plaintext storage as per your request)
             private_key = rsa.generate_private_key(public_exponent=65537, key_size=1024)
             private_key_pem = private_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
@@ -543,10 +583,15 @@ def import_student_view(request):
             Account.objects.create(
                 graduate=graduate,
                 public_key=public_key_pem.decode(),
-                private_key=bcrypt.hashpw(private_key_pem, bcrypt.gensalt()).decode()
+                private_key=private_key_pem.decode()
             )
 
-        messages.success(request, "Students successfully imported.")
+            imported += 1
+
+        messages.success(request, f"{imported} students successfully imported.")
+        if skipped:
+            messages.warning(request, "Some rows were skipped:\n" + "\n".join(skipped))
+
         return redirect("account_list")
 
     return render(request, "main/accounts/import_student.html")
