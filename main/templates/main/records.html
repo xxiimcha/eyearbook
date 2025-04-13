@@ -1,0 +1,57 @@
+{% extends 'base-admin.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+  <!-- Page Header -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Submitted Records</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h3 class="card-title">List of Graduates Who Submitted Forms</h3>
+        </div>
+        <div class="card-body table-responsive">
+          <table id="recordsTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student ID</th>
+                <th>Full Name</th>
+                <th>Program</th>
+                <th>Email</th>
+                <th>Date Submitted</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for graduate in graduates %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ graduate.student_id }}</td>
+                <td>{{ graduate.firstname }} {{ graduate.lastname }}</td>
+                <td>{{ graduate.program }}</td>
+                <td>{{ graduate.email }}</td>
+                <td>{{ graduate.submitted_at|date:"M d, Y - h:i A" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center text-muted">No submissions yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

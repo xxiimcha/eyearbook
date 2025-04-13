@@ -17,6 +17,9 @@ urlpatterns = [
     path('configure/', views.configure, name='configure'),  # Batch management view
     path('update-batch/<int:batch_id>/', views.update_batch, name='update_batch'),  # Update batch
 
+    # Records Module
+    path('records/', views.records_view, name='records'),
+
     # Graduates Module
     path('batch-graduates/<int:batch_id>/', views.batch_graduates, name='batch_graduates'),  # View graduates in a batch
     path('graduates/', views.graduate_list, name='graduate_list'),  # General list of graduates

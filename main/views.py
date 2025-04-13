@@ -17,6 +17,7 @@ import bcrypt
 import json
 import csv
 from django.contrib.auth import get_user_model  # Import this
+from collections import defaultdict
 
 def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
@@ -220,16 +221,22 @@ def update_batch(request, batch_id):
 
     return render(request, "update_batch.html", {"batch": batch})
 
-def graduate_list(request, batch_id=None):
-    if batch_id:
-        graduates = Graduate.objects.filter(batch__id=batch_id)
-        batch = get_object_or_404(Batch, id=batch_id)  # Fetch the batch details
-    else:
-        graduates = Graduate.objects.all()
-        batch = None
+def graduate_list(request):
+    batches = Batch.objects.all().order_by('-to_year')
+    graduates_by_batch_course = {}
 
-    return render(request, 'main/graduates/graduate_list.html', {'graduates': graduates, 'batch_id': batch_id, 'batch': batch})
+    for batch in batches:
+        courses = defaultdict(list)
+        graduates = Graduate.objects.filter(batch=batch)
 
+        for grad in graduates:
+            courses[grad.course].append(grad)
+
+        graduates_by_batch_course[batch] = dict(courses)
+
+    return render(request, 'main/graduates/graduate_list.html', {
+        'graduates_by_batch_course': graduates_by_batch_course
+    })
 
 def add_graduate(request, batch_id):
     # Ensure the batch exists
@@ -511,3 +518,7 @@ def import_student_view(request):
         return redirect("account_list")
 
     return render(request, "main/accounts/import_student.html")
+
+def records_view(request):
+    graduates = Graduate.objects.filter(yearbook__isnull=False).select_related('yearbook').order_by('-yearbook__submitted_at')
+    return render(request, 'main/records.html', {'graduates': graduates})
