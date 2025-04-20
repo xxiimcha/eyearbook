@@ -57,12 +57,10 @@ def profile_view(request, account_id):
     graduate = account.graduate
     batch = graduate.batch
 
-    # Get batchmates (with yearbook submissions)
     batchmates = (
         Graduate.objects.filter(batch=batch)
-        .filter(yearbook__isnull=False)
-        .select_related("yearbook")
         .exclude(id=graduate.id)
+        .select_related("batch")
     )
 
     context = {
