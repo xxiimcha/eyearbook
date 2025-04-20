@@ -625,3 +625,48 @@ def import_student_view(request):
 def records_view(request):
     graduates = Graduate.objects.filter(yearbook__isnull=False).select_related('yearbook').order_by('-yearbook__submitted_at')
     return render(request, 'main/records.html', {'graduates': graduates})
+
+def user_management(request):
+    users = User.objects.filter(is_staff=True)
+    return render(request, 'main/admin/user_management.html', {'users': users})
+
+def add_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST.get('email', '')
+        password = request.POST['password']
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists.')
+        else:
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.is_staff = True
+            user.save()
+            messages.success(request, 'Admin user added successfully.')
+    return redirect('user_management')
+
+
+def edit_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    
+    if request.method == 'POST':
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        if request.POST.get('password'):
+            user.set_password(request.POST.get('password'))
+        user.save()
+        messages.success(request, 'User updated successfully.')
+        return redirect('user_management')
+    
+    return render(request, 'edit_user.html', {'user': user})
+
+
+def delete_user(request, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        messages.success(request, 'User deleted successfully.')
+    else:
+        messages.error(request, 'Invalid request method.')
+    
+    return redirect('user_management')

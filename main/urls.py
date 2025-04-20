@@ -47,6 +47,12 @@ urlpatterns = [
 
     path('analytics/', views.analytics_view, name='analytics'),
 
+
+    path('user-management/', views.user_management, name='user_management'),
+    path('user-management/add/', views.add_user, name='add_user'),
+    path('users/edit/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('users/delete/<int:user_id>/', views.delete_user, name='delete_user'),
+
     # Logout function
     path('logout/', auth_views.LogoutView.as_view(next_page='student_login'), name='logout'),
 ]
