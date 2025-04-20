@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Batch, Graduate, Account,  Yearbook
 from django.db.models import Count
 from itertools import groupby
+from django.views.decorators.http import require_POST
 from .forms import BatchForm, GraduateForm, GraduateEditForm
 from django.http import JsonResponse
 from django.urls import reverse
@@ -365,22 +366,21 @@ def edit_graduate(request, pk):
 
     return render(request, 'main/graduates/edit_graduate.html', {'form': form, 'graduate': graduate})
 
-def delete_graduate(request, pk):
-    # Get the graduate
-    graduate = get_object_or_404(Graduate, pk=pk)
-    batch_id = graduate.batch.id if graduate.batch else request.GET.get('batch_id')
+
+@require_POST
+def delete_graduate(request, graduate_id):
+    graduate = get_object_or_404(Graduate, id=graduate_id)
     
-    # Delete the associated account
-    account = Account.objects.filter(graduate=graduate).first()  # Check if the account exists
-    if account:
+    # Optionally delete the account record too, if it's a OneToOne or FK
+    try:
+        account = Account.objects.get(graduate=graduate)
         account.delete()
-    
-    # Delete the graduate
+    except Account.DoesNotExist:
+        pass
+
     graduate.delete()
-    messages.success(request, "Graduate and associated account deleted successfully!")
-    
-    # Redirect to batch-specific graduates page
-    return redirect('batch_graduates', batch_id=batch_id)
+    messages.success(request, "Graduate and account deleted successfully.")
+    return redirect('account_list')  # Change this to your actual list view name
 
 def batch_graduates(request, batch_id):
     graduates = Graduate.objects.filter(batch_id=batch_id)
