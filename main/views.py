@@ -73,6 +73,20 @@ def profile_view(request, account_id):
     }
     return render(request, "main/profile_page.html", context)
 
+def update_profile(request):
+    graduate = Graduate.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        graduate.email = request.POST.get('email')
+        graduate.contact = request.POST.get('contact')
+        graduate.address = request.POST.get('address')
+        graduate.ambition = request.POST.get('ambition')
+        graduate.save()
+        messages.success(request, 'Profile updated successfully.')
+        return redirect('graduate_profile')
+
+    return render(request, 'main/profile_page.html', {'graduate': graduate})
+
 def get_encrypted_challenge(request):
     email = request.GET.get('email')
     try:

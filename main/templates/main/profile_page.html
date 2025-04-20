@@ -6,8 +6,9 @@
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
+                <div class="card-header bg-primary text-white text-center d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Graduate Profile</h4>
+                    <button type="button" id="editButton" class="btn btn-light btn-sm">Edit</button>
                 </div>
                 <div class="card-body">
                     {% if photo_url %}
@@ -15,13 +16,31 @@
                             <img src="{{ photo_url }}" class="img-thumbnail" width="150" height="150" alt="Graduate Photo">
                         </div>
                     {% endif %}
-                    <p><strong>Full Name:</strong> {{ graduate.first_name }} {{ graduate.middle_name }} {{ graduate.last_name }}</p>
-                    <p><strong>Email:</strong> {{ graduate.email }}</p>
-                    <p><strong>Contact:</strong> {{ graduate.contact }}</p>
-                    <p><strong>Address:</strong> {{ graduate.address }}</p>
-                    <p><strong>Course:</strong> {{ graduate.course }}</p>
-                    <p><strong>Ambition:</strong> {{ graduate.ambition|default:"None" }}</p>
-                    <p><strong>Batch:</strong> {{ batch }}</p>
+
+                    <form method="post" action="{% url 'update_profile' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label><strong>Full Name</strong></label>
+                            <input type="text" class="form-control" value="{{ graduate.first_name }} {{ graduate.middle_name }} {{ graduate.last_name }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email"><strong>Email</strong></label>
+                            <input type="email" class="form-control editable" id="email" name="email" value="{{ graduate.email }}" required disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contact"><strong>Contact</strong></label>
+                            <input type="text" class="form-control editable" id="contact" name="contact" value="{{ graduate.contact }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address"><strong>Address</strong></label>
+                            <input type="text" class="form-control editable" id="address" name="address" value="{{ graduate.address }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ambition"><strong>Ambition</strong></label>
+                            <input type="text" class="form-control editable" id="ambition" name="ambition" value="{{ graduate.ambition }}" disabled>
+                        </div>
+                        <button type="submit" id="saveBtn" class="btn btn-success d-none">Save Changes</button>
+                    </form>
                 </div>
             </div>
 
@@ -50,4 +69,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('editButton').addEventListener('click', function () {
+        const editableInputs = document.querySelectorAll('.editable');
+        const saveBtn = document.getElementById('saveBtn');
+
+        editableInputs.forEach(input => input.removeAttribute('disabled'));
+        saveBtn.classList.remove('d-none');
+        this.classList.add('d-none');  // Hide the Edit button
+    });
+</script>
 {% endblock %}
