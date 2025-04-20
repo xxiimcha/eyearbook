@@ -143,16 +143,25 @@ def form_page(request, account_id=None):
     graduate_data = None
     graduate = None
     submitted = False
+    selected_batch_list = []
 
     if account_id:
         account = get_object_or_404(Account, id=account_id)
         graduate = account.graduate
+        batch_display = f"{graduate.batch.from_year} - {graduate.batch.to_year}"
+        submitted = Yearbook.objects.filter(graduate=graduate).exists()
+
         graduate_data = {
             "full_name": f"{graduate.first_name} {graduate.middle_name or ''} {graduate.last_name}".strip(),
             "mobile_number": graduate.contact,
-            "address": graduate.address
+            "address": graduate.address,
+            "course": graduate.course,
+            "batch_id": graduate.batch.id,
+            "batch_display": batch_display
         }
-        submitted = Yearbook.objects.filter(graduate=graduate).exists()
+
+        # ✅ Get batch list for selected year range
+        selected_batch_list = batch_data.get(batch_display, [])
 
     # Handle form submission
     if request.method == "POST" and graduate and not submitted:
@@ -169,7 +178,6 @@ def form_page(request, account_id=None):
         income = request.POST.get("income")
         agreed = bool(request.POST.get("data_privacy"))
 
-        # Save to Yearbook model with status = pending
         Yearbook.objects.create(
             graduate=graduate,
             civil_status=civil_status,
@@ -186,17 +194,17 @@ def form_page(request, account_id=None):
             agreed_to_privacy=agreed,
             status="Pending"
         )
-        submitted = True  # Prevent re-entry after saving
+        submitted = True
 
     context = {
         "batch_years": batch_data,
         "graduate_data": graduate_data,
         "account_id": account_id,
-        "submitted": submitted
+        "submitted": submitted,
+        "selected_batch_list": selected_batch_list,  # ✅ send to template
     }
 
     return render(request, "main/form.html", context)
-
 
 @login_required
 def dashboard_view(request):
