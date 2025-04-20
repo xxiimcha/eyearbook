@@ -72,7 +72,12 @@ def profile_view(request, account_id):
     return render(request, "main/profile_page.html", context)
 
 def update_profile(request):
-    graduate = Graduate.objects.get(user=request.user)
+    graduate_id = request.session.get('graduate_id')
+
+    if not graduate_id:
+        return redirect('student_login')  # or any error page
+
+    graduate = get_object_or_404(Graduate, id=graduate_id)
 
     if request.method == 'POST':
         graduate.email = request.POST.get('email')
@@ -81,9 +86,10 @@ def update_profile(request):
         graduate.ambition = request.POST.get('ambition')
         graduate.save()
         messages.success(request, 'Profile updated successfully.')
-        return redirect('graduate_profile')
 
-    return render(request, 'main/profile_page.html', {'graduate': graduate})
+        return redirect('profile_page', account_id=graduate.account.id)
+
+    return redirect('profile_page', account_id=graduate.account.id)
 
 def get_encrypted_challenge(request):
     email = request.GET.get('email')
