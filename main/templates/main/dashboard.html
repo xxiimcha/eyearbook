@@ -61,30 +61,65 @@
   </div>
 </div>
 
+<!-- Batch Filter Form -->
+<form method="get" class="form-inline mb-3">
+  <label class="mr-2"><strong>Filter by Batch:</strong></label>
+  <select name="batch_id" class="form-control mr-2" onchange="this.form.submit()">
+    <option value="">-- Select Batch --</option>
+    {% for batch in batches %}
+      <option value="{{ batch.id }}" {% if batch.id == selected_batch_id %}selected{% endif %}>
+        {{ batch.from_year }} - {{ batch.to_year }} ({{ batch.batch_type }})
+      </option>
+    {% endfor %}
+  </select>
+</form>
+
 <!-- Chart Section -->
-<div class="row mt-4">
+<div class="row">
   <div class="col-md-6">
-    <div class="card">
+    <div class="card h-100">
       <div class="card-header bg-gradient-primary text-white">
         <h5 class="mb-0">Submissions by Batch</h5>
       </div>
-      <div class="card-body">
-        <canvas id="batchChart"></canvas>
+      <div class="card-body p-3" style="height: 350px;">
+        <div style="position: relative; height: 100%; width: 100%;">
+          <canvas id="batchChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="col-md-6">
-    <div class="card">
+    <div class="card h-100">
       <div class="card-header bg-gradient-info text-white">
         <h5 class="mb-0">Submission Status Overview</h5>
       </div>
-      <div class="card-body">
-        <canvas id="statusChart"></canvas>
+      <div class="card-body p-3" style="height: 350px;">
+        <div style="position: relative; height: 100%; width: 100%;">
+          <canvas id="statusChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Course Chart (Filtered Batch) -->
+{% if selected_batch_id %}
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header bg-gradient-warning text-white">
+        <h5 class="mb-0">Graduates per Course (Selected Batch)</h5>
+      </div>
+      <div class="card-body p-3" style="height: 400px;">
+        <div style="position: relative; height: 100%; width: 100%;">
+          <canvas id="courseChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <!-- Recent Submissions -->
 <div class="card mt-4">
@@ -106,7 +141,11 @@
         <tr>
           <td>{{ entry.graduate.full_name }}</td>
           <td>{{ entry.graduate.batch }}</td>
-          <td><span class="badge badge-{% if entry.status == 'pending' %}warning{% elif entry.status == 'approved' %}success{% else %}danger{% endif %}">{{ entry.status|title }}</span></td>
+          <td>
+            <span class="badge badge-{% if entry.status == 'pending' %}warning{% elif entry.status == 'approved' %}success{% else %}danger{% endif %}">
+              {{ entry.status|title }}
+            </span>
+          </td>
           <td>{{ entry.created_at|date:"M d, Y" }}</td>
         </tr>
         {% empty %}
@@ -131,7 +170,11 @@
       }]
     },
     options: {
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true }
+      }
     }
   });
 
@@ -145,8 +188,40 @@
       }]
     },
     options: {
-      responsive: true
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
+
+  {% if selected_batch_id %}
+  const courseChart = new Chart(document.getElementById('courseChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ course_labels|safe }},
+      datasets: [{
+        label: 'Graduates',
+        data: {{ course_counts|safe }},
+        backgroundColor: '#fd7e14'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+  {% endif %}
 </script>
+
+<style>
+  canvas {
+    max-height: 100%;
+    max-width: 100%;
+  }
+</style>
 {% endblock %}

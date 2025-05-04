@@ -213,34 +213,48 @@ def form_page(request, account_id=None):
 
 @login_required
 def dashboard_view(request):
-    # Total counts
-    total_batches = Batch.objects.count()
+    selected_batch_id = request.GET.get('batch_id')
+    batches = Batch.objects.all().order_by('-to_year')
+
+    total_batches = batches.count()
     total_graduates = Graduate.objects.count()
     total_records = Yearbook.objects.count()
+    current_batch = f"{batches.first().from_year}-{batches.first().to_year}" if batches else "N/A"
 
-    # Get most recent batch
-    latest_batch = Batch.objects.order_by('-to_year').first()
-    current_batch = f"{latest_batch.from_year}-{latest_batch.to_year}" if latest_batch else "N/A"
-
-    # Recent submissions
     recent_submissions = Yearbook.objects.select_related('graduate').order_by('-id')[:5]
 
-    # Submissions per batch (bar chart)
+    # Batch summary for bar chart
     batch_data = (
         Yearbook.objects
         .values('graduate__batch__from_year', 'graduate__batch__to_year')
         .annotate(count=Count('id'))
         .order_by('graduate__batch__from_year')
     )
-
     batch_labels = [f"{b['graduate__batch__from_year']}-{b['graduate__batch__to_year']}" for b in batch_data]
     batch_counts = [b['count'] for b in batch_data]
 
-    # Status pie chart
-    status_labels = ['pending', 'approved', 'rejected']
+    # Course-wise breakdown
+    course_labels = []
+    course_counts = []
+
+    if selected_batch_id:
+        selected_batch = Batch.objects.get(id=selected_batch_id)
+        course_data = (
+            Graduate.objects
+            .filter(batch_id=selected_batch_id)
+            .values('course')
+            .annotate(count=Count('id'))
+            .order_by('course')
+        )
+        course_labels = [c['course'] for c in course_data]
+        course_counts = [c['count'] for c in course_data]
+    else:
+        selected_batch = None
+
     status_counts = [
-        Yearbook.objects.filter(status=label).count()
-        for label in status_labels
+        Yearbook.objects.filter(status="pending").count(),
+        Yearbook.objects.filter(status="approved").count(),
+        Yearbook.objects.filter(status="rejected").count()
     ]
 
     context = {
@@ -252,7 +266,12 @@ def dashboard_view(request):
         "batch_labels": json.dumps(batch_labels),
         "batch_counts": json.dumps(batch_counts),
         "status_counts": json.dumps(status_counts),
+        "course_labels": json.dumps(course_labels),
+        "course_counts": json.dumps(course_counts),
+        "batches": batches,
+        "selected_batch_id": int(selected_batch_id) if selected_batch_id else None,
     }
+
     return render(request, 'main/dashboard.html', context)
 
 def configure(request):
