@@ -335,7 +335,7 @@ def add_graduate(request, batch_id):
         public_key_clean = public_key_pem.decode().replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "").replace("\n", "")
 
         # Hash the private key
-        hashed_private_key = bcrypt.hashpw(private_key_pem, bcrypt.gensalt()).decode()
+        plain_private_key = private_key_pem.decode()
 
         # Create an account record
         Account.objects.create(
@@ -468,7 +468,6 @@ def analytics_view(request):
     }
     return render(request, "main/analytics.html", context)
 
-
 def add_student_view(request):
     batches = Batch.objects.all()
 
@@ -514,18 +513,18 @@ def add_student_view(request):
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
-        # Clean public key for storage
+        # Clean public key (strip headers for DB)
         public_key_clean = public_key_pem.decode().replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "").replace("\n", "")
-        hashed_private_key = bcrypt.hashpw(private_key_pem, bcrypt.gensalt()).decode()
+        private_key_plain = private_key_pem.decode()  # Plaintext private key
 
-        # Save Account
+        # Save Account with plaintext private key
         Account.objects.create(
             graduate=graduate,
             public_key=public_key_clean,
-            private_key=hashed_private_key
+            private_key=private_key_plain
         )
 
-        # ✅ Send RSA keys via email
+        # Send email with keys
         subject = 'Your eYearbook Access Keys'
         message = f"""
 Hello {first_name} {last_name},
@@ -539,12 +538,12 @@ Below are your RSA access keys. Keep them safe:
 {public_key_pem.decode()}
 
 🔒 Private Key:
-{private_key_pem.decode()}
+{private_key_plain}
 ------------------------------
 
 The private key is confidential and will be required for secure access.
 
-Best regards,
+Best regards,  
 eYearbook Admin Team
 """
         send_mail(
@@ -558,6 +557,7 @@ eYearbook Admin Team
         return redirect('account_list')
 
     return render(request, 'main/accounts/add_student.html', {'batches': batches})
+
 
 def import_student_view(request):
     if request.method == "POST":
