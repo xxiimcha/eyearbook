@@ -21,6 +21,9 @@ from django.contrib.auth import get_user_model  # Import this
 from collections import defaultdict
 from django.core.mail import send_mail
 from django.conf import settings
+from django.db.models import Count
+from django.utils.timezone import now
+from django.db.models.functions import TruncMonth
 
 def landing_page(request):
     return render(request, 'main/landing.html')  # Make sure the template exists
@@ -452,29 +455,41 @@ def course_graduates(request, from_year, to_year, course):
     return render(request, 'main/yearbook/graduates.html', {'graduates': graduates, 'course': course})
 
 
+
 @login_required
 def analytics_view(request):
     total_graduates = Graduate.objects.count()
     total_submitted = Yearbook.objects.count()
     total_pending = Yearbook.objects.filter(status="pending").count()
 
-    # Chart data
+    # Chart 1: Submissions per Batch
     batch_labels = []
     batch_counts = []
     batches = Batch.objects.all()
     for batch in batches:
         count = Yearbook.objects.filter(graduate__batch=batch).count()
         if count > 0:
-            batch_labels.append(f"{batch.from_year}-{batch.to_year} {batch.batch_type}")
+            label = f"{batch.from_year}-{batch.to_year} {batch.batch_type}"
+            batch_labels.append(label)
             batch_counts.append(count)
 
-    status_counts = [
-        Yearbook.objects.filter(status="pending").count(),
-        Yearbook.objects.filter(status="approved").count(),
-        Yearbook.objects.filter(status="rejected").count()
-    ]
+    # Chart 2: Graduates per Course
+    course_data = Graduate.objects.values('course').annotate(count=Count('id')).order_by('course')
+    course_labels = [entry['course'] for entry in course_data]
+    course_counts = [entry['count'] for entry in course_data]
 
-    recent_submissions = Yearbook.objects.select_related("graduate").order_by('-id')[:5]
+    # Chart 3: Monthly Submission Trends (based on submitted_at)
+    current_year = now().year
+    monthly_data = (
+        Yearbook.objects
+        .filter(submitted_at__year=current_year)
+        .annotate(month=TruncMonth('submitted_at'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+    month_labels = [entry['month'].strftime('%b') for entry in monthly_data]
+    monthly_submission_counts = [entry['count'] for entry in monthly_data]
 
     context = {
         "total_graduates": total_graduates,
@@ -482,8 +497,10 @@ def analytics_view(request):
         "total_pending": total_pending,
         "batch_labels": batch_labels,
         "batch_counts": batch_counts,
-        "status_counts": status_counts,
-        "recent_submissions": recent_submissions,
+        "course_labels": course_labels,
+        "course_counts": course_counts,
+        "month_labels": month_labels,
+        "monthly_submission_counts": monthly_submission_counts,
     }
     return render(request, "main/analytics.html", context)
 

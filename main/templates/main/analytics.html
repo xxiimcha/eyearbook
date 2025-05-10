@@ -36,42 +36,40 @@
         </div>
     </div>
 
-    <!-- Charts -->
+    <!-- Charts in Cards -->
     <div class="row">
-        <div class="col-md-6">
-            <canvas id="submissionsChart"></canvas>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    Submissions per Batch
+                </div>
+                <div class="card-body">
+                    <canvas id="submissionsChart"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <canvas id="statusPieChart"></canvas>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    Graduates per Course
+                </div>
+                <div class="card-body">
+                    <canvas id="courseDistributionChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Tables -->
-    <div class="row mt-5">
+    <div class="row mb-5">
         <div class="col-md-12">
-            <h5>Recent Submissions</h5>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Batch</th>
-                        <th>Status</th>
-                        <th>Date Submitted</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entry in recent_submissions %}
-                        <tr>
-                            <td>{{ entry.graduate.full_name }}</td>
-                            <td>{{ entry.graduate.batch }}</td>
-                            <td>{{ entry.status|title }}</td>
-                            <td>{{ entry.created_at|date:"M d, Y" }}</td>
-                        </tr>
-                    {% empty %}
-                        <tr><td colspan="4">No recent submissions found.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    Monthly Submission Trends
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyTrendsChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -80,7 +78,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx1 = document.getElementById('submissionsChart').getContext('2d');
-    const submissionsChart = new Chart(ctx1, {
+    new Chart(ctx1, {
         type: 'bar',
         data: {
             labels: {{ batch_labels|safe }},
@@ -93,14 +91,34 @@
         options: { responsive: true }
     });
 
-    const ctx2 = document.getElementById('statusPieChart').getContext('2d');
-    const statusPieChart = new Chart(ctx2, {
-        type: 'pie',
+    const ctx2 = document.getElementById('courseDistributionChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
         data: {
-            labels: ['Pending', 'Approved', 'Rejected'],
+            labels: {{ course_labels|safe }},
             datasets: [{
-                data: {{ status_counts|safe }},
-                backgroundColor: ['#ffc107', '#28a745', '#dc3545']
+                label: 'Graduates per Course',
+                data: {{ course_counts|safe }},
+                backgroundColor: 'rgba(40, 167, 69, 0.7)'
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true
+        }
+    });
+
+    const ctx3 = document.getElementById('monthlyTrendsChart').getContext('2d');
+    new Chart(ctx3, {
+        type: 'line',
+        data: {
+            labels: {{ month_labels|safe }},
+            datasets: [{
+                label: 'Monthly Submissions',
+                data: {{ monthly_submission_counts|safe }},
+                fill: false,
+                borderColor: '#17a2b8',
+                tension: 0.3
             }]
         },
         options: { responsive: true }

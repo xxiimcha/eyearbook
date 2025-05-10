@@ -32,6 +32,9 @@ class Account(models.Model):
 
     def __str__(self):
         return f"Account for {self.graduate.first_name} {self.graduate.last_name}"
+    
+from django.utils import timezone
+
 class Yearbook(models.Model):
     graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE)
 
@@ -51,8 +54,11 @@ class Yearbook(models.Model):
 
     agreed_to_privacy = models.BooleanField(default=False)
 
-    # ✅ New field
+    # Status of yearbook form
     status = models.CharField(max_length=20, default='Pending')
+
+    # ✅ Add this
+    submitted_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Yearbook Entry for {self.graduate.first_name} {self.graduate.last_name}"
