@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Batch, Graduate, Account,  Yearbook
+from .models import Batch, Graduate, Account,  Yearbook, GraduateTracerForm
 from django.db.models import Count
 from itertools import groupby
 from django.views.decorators.http import require_POST
@@ -134,19 +134,13 @@ def login_view(request):
             messages.error(request, "Invalid email or password")
 
     return render(request, "main/login.html")
-
 def form_page(request, account_id=None):
-    # Fetch batch data
     batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
     batch_data = {}
 
     for record in batch_records:
         year_range = f"{record['from_year']} - {record['to_year']}"
-        batch_id = record["id"]
-        batch_type = record["batch_type"]
-        if year_range not in batch_data:
-            batch_data[year_range] = []
-        batch_data[year_range].append({"id": batch_id, "type": batch_type})
+        batch_data.setdefault(year_range, []).append({"id": record["id"], "type": record["batch_type"]})
 
     graduate_data = None
     graduate = None
@@ -157,10 +151,16 @@ def form_page(request, account_id=None):
         account = get_object_or_404(Account, id=account_id)
         graduate = account.graduate
         batch_display = f"{graduate.batch.from_year} - {graduate.batch.to_year}"
-        submitted = Yearbook.objects.filter(graduate=graduate).exists()
+        full_name_combined = f"{graduate.first_name} {graduate.middle_name or ''} {graduate.last_name}".strip()
+
+        # Check if form already submitted by full_name and contact number (as fallback instead of birthday)
+        submitted = GraduateTracerForm.objects.filter(
+            full_name__icontains=full_name_combined,
+            mobile_number=graduate.contact
+        ).exists()
 
         graduate_data = {
-            "full_name": f"{graduate.first_name} {graduate.middle_name or ''} {graduate.last_name}".strip(),
+            "full_name": full_name_combined,
             "mobile_number": graduate.contact,
             "address": graduate.address,
             "course": graduate.course,
@@ -168,40 +168,59 @@ def form_page(request, account_id=None):
             "batch_display": batch_display
         }
 
-        # ✅ Get batch list for selected year range
         selected_batch_list = batch_data.get(batch_display, [])
 
-    # Handle form submission
     if request.method == "POST" and graduate and not submitted:
-        civil_status = request.POST.get("civil_status")
-        birthday = request.POST.get("birthday")
-        region = request.POST.get("region")
-        sex = request.POST.get("sex")
-        honors = request.POST.get("honors")
-        grad_reasons = request.POST.getlist("grad_reasons")
-        other_reason = request.POST.get("other_reason", "")
-        employment_status = request.POST.get("employment_status")
-        job_title = request.POST.get("job_title")
-        company_name = request.POST.get("company_name")
-        income = request.POST.get("income")
-        agreed = bool(request.POST.get("data_privacy"))
+        data = request.POST
 
-        Yearbook.objects.create(
-            graduate=graduate,
-            civil_status=civil_status,
-            birthday=birthday,
-            region=region,
-            sex=sex,
-            honors=honors,
-            grad_reasons=json.dumps(grad_reasons),
-            other_reason=other_reason,
-            employment_status=employment_status,
-            job_title=job_title,
-            company_name=company_name,
-            income=income,
-            agreed_to_privacy=agreed,
-            status="Pending"
+        GraduateTracerForm.objects.create(
+            full_name=data.get('full_name'),
+            address=data.get('address'),
+            mobile_number=data.get('mobile_number'),
+            civil_status=data.get('civil_status'),
+            birthday=data.get('birthday'),
+            region=data.get('region'),
+            sex=data.get('sex'),
+            province=data.get('province'),
+            residence_location=data.get('residence_location'),
+            degree=data.get('degree'),
+            specialization=data.get('specialization'),
+            college_name=data.get('college_name'),
+            year_graduated=data.get('year_graduated'),
+            honors=data.get('honors'),
+            exam_passed=data.get('exam_passed'),
+            exam_date=data.get('exam_date') or None,
+            exam_rating=data.get('exam_rating'),
+            undergrad_reasons=','.join(data.getlist('undergrad_reasons')),
+            grad_reasons=','.join(data.getlist('grad_reasons')),
+            grad_reasons_other=data.get('grad_reasons_other'),
+            trainings=data.get('trainings'),
+            advance_reason=data.get('advance_reason'),
+            employment_status=data.get('employment_status'),
+            unemployed_reasons=','.join(data.getlist('unemployed_reasons')),
+            occupation=data.get('occupation'),
+            business_line=data.get('business_line'),
+            work_location=','.join(data.getlist('work_location')),
+            first_job=data.get('first_job'),
+            stay_reasons=','.join(data.getlist('stay_reasons')),
+            job_course_relation=data.get('job_course_relation'),
+            job_finding_time=data.get('job_finding_time'),
+            job_accept_reasons=','.join(data.getlist('job_accept_reasons[]')),
+            job_change_reasons=','.join(data.getlist('job_change_reasons[]')),
+            first_job_duration=data.get('first_job_duration'),
+            first_job_position=data.get('first_job_position'),
+            current_job_position=data.get('current_job_position'),
+            current_employer_name=data.get('current_employer_name'),
+            current_employer_address=data.get('current_employer_address'),
+            current_supervisor_name=data.get('current_supervisor_name'),
+            current_employer_contact=data.get('current_employer_contact'),
+            initial_salary=data.get('initial_salary'),
+            curriculum_relevance=data.get('curriculum_relevance'),
+            college_competencies=','.join(data.getlist('college_competencies[]')),
+            other_skills_specified=data.get('other_skills_specified'),
+            data_privacy=bool(data.get('data_privacy'))
         )
+
         submitted = True
 
     context = {
@@ -209,7 +228,7 @@ def form_page(request, account_id=None):
         "graduate_data": graduate_data,
         "account_id": account_id,
         "submitted": submitted,
-        "selected_batch_list": selected_batch_list,  # ✅ send to template
+        "selected_batch_list": selected_batch_list,
     }
 
     return render(request, "main/form.html", context)
