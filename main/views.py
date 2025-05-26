@@ -301,6 +301,7 @@ def update_batch(request, batch_id):
 
     return render(request, "update_batch.html", {"batch": batch})
 
+
 def graduate_list(request):
     batches = Batch.objects.all().order_by('-to_year')
     graduates_by_batch_course = {}
@@ -310,6 +311,11 @@ def graduate_list(request):
         graduates = Graduate.objects.filter(batch=batch)
 
         for grad in graduates:
+            # Try to attach related yearbook data if it exists
+            try:
+                grad.yearbook = grad.yearbook  # Access OneToOne relation
+            except Yearbook.DoesNotExist:
+                grad.yearbook = None
             courses[grad.course].append(grad)
 
         graduates_by_batch_course[batch] = dict(courses)

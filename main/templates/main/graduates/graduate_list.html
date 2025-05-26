@@ -93,7 +93,6 @@
     </div>
   </div>
 </div>
-
 <!-- View Modal -->
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -110,15 +109,20 @@
       <div class="modal-body">
         <div class="row">
           <!-- Profile Picture -->
-          <div class="col-md-4 text-center">
-            <img id="modalGraduatePhoto" src="" alt="Profile Picture" class="img-fluid rounded-circle shadow" style="border: 5px solid #007bff; max-height: 200px;">
+          <div class="col-md-4 text-center d-flex align-items-start justify-content-center">
+            <img id="modalGraduatePhoto" src="" alt="Profile Picture"
+                 class="img-fluid shadow-sm border border-primary"
+                 style="width: 100%; max-width: 220px; height: auto; border-radius: 6px;">
           </div>
+
           <!-- Graduate Details -->
           <div class="col-md-8">
-            <h2 id="modalGraduateName" class="text-primary font-weight-bold text-center"></h2>
-            <p class="text-muted text-center">Batch: <span id="modalGraduateBatch"></span></p>
+            <div class="text-center mb-3">
+              <h3 id="modalGraduateName" class="text-primary font-weight-bold mb-1"></h3>
+              <small class="text-muted">Batch: <span id="modalGraduateBatch"></span></small>
+            </div>
             <hr>
-            <div class="graduate-details px-4">
+            <div class="px-2">
               <p><strong>Course:</strong> <span id="modalGraduateCourse"></span></p>
               <p><strong>Email:</strong> <span id="modalGraduateEmail"></span></p>
               <p><strong>Contact:</strong> <span id="modalGraduateContact"></span></p>
@@ -129,12 +133,13 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="modal-footer d-flex justify-content-center">
+      <div class="modal-footer justify-content-center">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+
 
 {% include 'includes/foot.html' %}
 
