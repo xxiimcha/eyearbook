@@ -1,210 +1,231 @@
 <!-- Employment Status -->
 <h5 class="text-primary mt-4">Employment Data</h5>
+
 <div class="form-group">
   <label for="employment_status">Are you presently employed?</label>
   <select class="form-control" id="employment_status" name="employment_status" required>
+    <option value="" disabled selected>------</option>
     <option value="yes">Yes</option>
     <option value="no">No</option>
     <option value="never_employed">Never Employed</option>
   </select>
 </div>
 
-<!-- Unemployed Reasons -->
-<div class="form-group">
-  <label>Please state reasons(s) why you are not yet employed. You may check more than one answer.</label>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="further_study"><label class="form-check-label">Advance or further study</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="family_concern"><label class="form-check-label">Family concern and decided not to find a job</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="health_reason"><label class="form-check-label">Health-related reason(s)</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="no_experience"><label class="form-check-label">Lack of work experience</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="no_opportunity"><label class="form-check-label">No job opportunity</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="no_search"><label class="form-check-label">Did not look for a job</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="other"><label class="form-check-label">Other reason not specified above</label></div>
+<!-- Unemployed Reasons Section -->
+<div id="unemployed_section" style="display:none;">
+  <div class="form-group">
+    <label>Please state reason(s) why you are not yet employed. You may check more than one answer.</label>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="further_study"><label class="form-check-label">Advance or further study</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="family_concern"><label class="form-check-label">Family concern and decided not to find a job</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="health_reason"><label class="form-check-label">Health-related reason(s)</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="no_experience"><label class="form-check-label">Lack of work experience</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="no_opportunity"><label class="form-check-label">No job opportunity</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="no_search"><label class="form-check-label">Did not look for a job</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="unemployed_reasons" value="other"><label class="form-check-label">Other reason not specified above</label></div>
+  </div>
 </div>
 
-<!-- Employment Details -->
-<div class="form-group">
-  <label for="occupation">Present Occupation (Ex. Grade School Teacher, Electrical Engineer, Self-employed)</label>
-  <input type="text" class="form-control" id="occupation" name="occupation">
-</div>
+<!-- Employed Details Section -->
+<div id="employed_section" style="display:none;">
+  <div class="form-group">
+    <label for="occupation">Present Occupation (Ex. Grade School Teacher, Electrical Engineer, Self-employed)</label>
+    <input type="text" class="form-control" id="occupation" name="occupation">
+  </div>
 
-<div class="form-group">
-  <label>If employed, check only one major line of business of the company you are presently employed in.</label>
-  <select class="form-control" name="business_line">
-    <option value="agriculture">Agriculture, Hunting and Forestry</option>
-    <option value="fishing">Fishing</option>
-    <option value="mining">Mining and Quarrying</option>
-    <option value="manufacturing">Manufacturing</option>
-    <option value="utilities">Electricity, Gas and Water Supply</option>
-    <option value="construction">Construction</option>
-    <option value="retail">Wholesale and Retail Trade</option>
-    <option value="hospitality">Hotels and Restaurants</option>
-    <option value="transport">Transport Storage and Communication</option>
-    <option value="finance">Financial Intermediation</option>
-    <option value="real_estate">Real Estate, Renting and Business Activities</option>
-    <option value="public_admin">Public Administration and Defense</option>
-    <option value="education">Education</option>
-    <option value="health">Health and Social Work</option>
-    <option value="community">Other Community, Social and Personal Service Activities</option>
-    <option value="private_households">Private Households with Employed Persons</option>
-    <option value="extraterritorial">Extra-territorial Organization and Bodies</option>
-    <option value="none">None of the above</option>
-  </select>
-</div>
+  <div class="form-group">
+    <label>If employed, check only one major line of business of the company you are presently employed in.</label>
+    <select class="form-control" name="business_line">
+      <option value="agriculture">Agriculture, Hunting and Forestry</option>
+      <option value="fishing">Fishing</option>
+      <option value="mining">Mining and Quarrying</option>
+      <option value="manufacturing">Manufacturing</option>
+      <option value="utilities">Electricity, Gas and Water Supply</option>
+      <option value="construction">Construction</option>
+      <option value="retail">Wholesale and Retail Trade</option>
+      <option value="hospitality">Hotels and Restaurants</option>
+      <option value="transport">Transport Storage and Communication</option>
+      <option value="finance">Financial Intermediation</option>
+      <option value="real_estate">Real Estate, Renting and Business Activities</option>
+      <option value="public_admin">Public Administration and Defense</option>
+      <option value="education">Education</option>
+      <option value="health">Health and Social Work</option>
+      <option value="community">Other Community, Social and Personal Service Activities</option>
+      <option value="private_households">Private Households with Employed Persons</option>
+      <option value="extraterritorial">Extra-territorial Organization and Bodies</option>
+      <option value="none">None of the above</option>
+    </select>
+  </div>
 
-<div class="form-group">
-  <label>Place of work</label>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="work_location" value="local"><label class="form-check-label">Local</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="work_location" value="abroad"><label class="form-check-label">Abroad</label></div>
-</div>
+  <div class="form-group">
+    <label>Place of work</label>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="work_location" value="local"><label class="form-check-label">Local</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="work_location" value="abroad"><label class="form-check-label">Abroad</label></div>
+  </div>
 
-<div class="form-group">
-  <label>Is this your first job after college?</label>
-  <select class="form-control" name="first_job">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-    <option value="maybe">Maybe</option>
-    <option value="na">N/A</option>
-  </select>
-</div>
+  <div class="form-group">
+    <label>Is this your first job after college?</label>
+    <select class="form-control" name="first_job">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+      <option value="maybe">Maybe</option>
+      <option value="na">N/A</option>
+    </select>
+  </div>
 
-<div class="form-group">
-  <label>What are your reason(s) for staying in the job?</label>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="salary"><label class="form-check-label">Salaries and benefits</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="challenge"><label class="form-check-label">Career challenge</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="special_skill"><label class="form-check-label">Related to special skill</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="course_related"><label class="form-check-label">Related to course or program of study</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="residence"><label class="form-check-label">Proximity to residence</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="peer"><label class="form-check-label">Peer influence</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="family"><label class="form-check-label">Family influence</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="other"><label class="form-check-label">Other reason not mentioned above</label></div>
-</div>
+  <div class="form-group">
+    <label>What are your reason(s) for staying in the job?</label>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="salary"><label class="form-check-label">Salaries and benefits</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="challenge"><label class="form-check-label">Career challenge</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="special_skill"><label class="form-check-label">Related to special skill</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="course_related"><label class="form-check-label">Related to course or program of study</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="residence"><label class="form-check-label">Proximity to residence</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="peer"><label class="form-check-label">Peer influence</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="family"><label class="form-check-label">Family influence</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="stay_reasons" value="other"><label class="form-check-label">Other reason not mentioned above</label></div>
+  </div>
 
-<div class="form-group">
-  <label>Is your first job related to the course you took up in college?</label>
-  <select class="form-control" name="job_course_relation">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-    <option value="na">N/A</option>
-  </select>
-</div>
+  <div class="form-group">
+    <label>Is your first job related to the course you took up in college?</label>
+    <select class="form-control" name="job_course_relation">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+      <option value="na">N/A</option>
+    </select>
+  </div>
 
-<div class="form-group">
-  <label>Length of Time in Finding a Job After Graduation</label>
-  <select class="form-control" name="job_finding_time">
-    <option value="<6months">less than 6 months</option>
-    <option value="6mo-1yr">6 months - 1 year</option>
-    <option value="1-2yrs">1 year - 2 years</option>
-    <option value=">2yrs">more than 2 years</option>
-  </select>
-</div>
+  <div class="form-group">
+    <label>Length of Time in Finding a Job After Graduation</label>
+    <select class="form-control" name="job_finding_time">
+      <option value="<6months">less than 6 months</option>
+      <option value="6mo-1yr">6 months - 1 year</option>
+      <option value="1-2yrs">1 year - 2 years</option>
+      <option value=">2yrs">more than 2 years</option>
+    </select>
+  </div>
 
-<!-- Reasons for Accepting the Job -->
-<div class="form-group">
-  <label>What were your reasons for accepting the job? You may check more than one answer.</label>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="salary"><label class="form-check-label">Salaries & benefits</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="challenge"><label class="form-check-label">Career challenge</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="special_skills"><label class="form-check-label">Related to special skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="residence"><label class="form-check-label">Proximity to residence</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="other"><label class="form-check-label">Other reason not mentioned above</label></div>
-</div>
+  <div class="form-group">
+    <label>What were your reasons for accepting the job? You may check more than one answer.</label>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="salary"><label class="form-check-label">Salaries & benefits</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="challenge"><label class="form-check-label">Career challenge</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="special_skills"><label class="form-check-label">Related to special skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="residence"><label class="form-check-label">Proximity to residence</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_accept_reasons[]" value="other"><label class="form-check-label">Other reason not mentioned above</label></div>
+  </div>
 
-<!-- Reasons for Changing the Job -->
-<div class="form-group">
-  <label>What were your reason(s) for changing job? You may check more than one answer.</label>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="salary"><label class="form-check-label">Salaries & benefits</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="challenge"><label class="form-check-label">Career challenge</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="special_skills"><label class="form-check-label">Related to special skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="residence"><label class="form-check-label">Proximity to residence</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="other"><label class="form-check-label">Other reason not mentioned above</label></div>
-</div>
+  <div class="form-group">
+    <label>What were your reason(s) for changing job? You may check more than one answer.</label>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="salary"><label class="form-check-label">Salaries & benefits</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="challenge"><label class="form-check-label">Career challenge</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="special_skills"><label class="form-check-label">Related to special skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="residence"><label class="form-check-label">Proximity to residence</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="job_change_reasons[]" value="other"><label class="form-check-label">Other reason not mentioned above</label></div>
+  </div>
 
-<!-- First Job Duration -->
-<div class="form-group">
-  <label>How long did you stay in your <em>first job</em>?</label>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="less_than_1mo"><label class="form-check-label">Less than a month</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="1to6mo"><label class="form-check-label">1 to 6 months</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="7to11mo"><label class="form-check-label">7 to 11 months</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="1to2yr"><label class="form-check-label">1 year to less than 2 years</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="2to3yr"><label class="form-check-label">2 years to less than 3 years</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="3to4yr"><label class="form-check-label">3 years to less than 4 years</label></div>
-</div>
+  <div class="form-group">
+    <label>How long did you stay in your <em>first job</em>?</label>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="less_than_1mo"><label class="form-check-label">Less than a month</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="1to6mo"><label class="form-check-label">1 to 6 months</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="7to11mo"><label class="form-check-label">7 to 11 months</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="1to2yr"><label class="form-check-label">1 year to less than 2 years</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="2to3yr"><label class="form-check-label">2 years to less than 3 years</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_duration" value="3to4yr"><label class="form-check-label">3 years to less than 4 years</label></div>
+  </div>
 
-<!-- Job Level Position - First Job -->
-<div class="form-group">
-  <label>Job Level Position <em>(First Job)</em></label>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="rank"><label class="form-check-label">Rank or Clerical</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="technical"><label class="form-check-label">Professional, Technical or Supervisory</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="managerial"><label class="form-check-label">Managerial or Executive</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="self_employed"><label class="form-check-label">Self-employed</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="na"><label class="form-check-label">Not applicable</label></div>
-</div>
+  <div class="form-group">
+    <label>Job Level Position <em>(First Job)</em></label>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="rank"><label class="form-check-label">Rank or Clerical</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="technical"><label class="form-check-label">Professional, Technical or Supervisory</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="managerial"><label class="form-check-label">Managerial or Executive</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="self_employed"><label class="form-check-label">Self-employed</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="first_job_position" value="na"><label class="form-check-label">Not applicable</label></div>
+  </div>
 
-<!-- Job Level Position - Current Job -->
-<div class="form-group">
-  <label>Job Level Position <em>(Current or Present Job)</em></label>
-  <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="rank"><label class="form-check-label">Rank or Clerical</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="technical"><label class="form-check-label">Professional, Technical or Supervisory</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="managerial"><label class="form-check-label">Managerial or Executive</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="self_employed"><label class="form-check-label">Self-employed</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="none"><label class="form-check-label">None of the above</label></div>
-</div>
+  <div class="form-group">
+    <label>Job Level Position <em>(Current or Present Job)</em></label>
+    <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="rank"><label class="form-check-label">Rank or Clerical</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="technical"><label class="form-check-label">Professional, Technical or Supervisory</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="managerial"><label class="form-check-label">Managerial or Executive</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="self_employed"><label class="form-check-label">Self-employed</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="current_job_position" value="none"><label class="form-check-label">None of the above</label></div>
+  </div>
 
-<!-- Current Employer Details -->
-<div class="form-group">
-  <label>Complete Name of your Current or Present Employer or Company</label>
-  <input type="text" class="form-control" name="current_employer_name">
-</div>
+  <div class="form-group">
+    <label>Complete Name of your Current or Present Employer or Company</label>
+    <input type="text" class="form-control" name="current_employer_name">
+  </div>
 
-<div class="form-group">
-  <label>Complete Address of your Current or Present Job</label>
-  <input type="text" class="form-control" name="current_employer_address">
-</div>
+  <div class="form-group">
+    <label>Complete Address of your Current or Present Job</label>
+    <input type="text" class="form-control" name="current_employer_address">
+  </div>
 
-<div class="form-group">
-  <label>Name of your Immediate Head or Supervisor on your Current or Present Job</label>
-  <input type="text" class="form-control" name="current_supervisor_name">
-</div>
+  <div class="form-group">
+    <label>Name of your Immediate Head or Supervisor on your Current or Present Job</label>
+    <input type="text" class="form-control" name="current_supervisor_name">
+  </div>
 
-<div class="form-group">
-  <label>Contact Number of your Current or Present Employer or Company</label>
-  <input type="text" class="form-control" name="current_employer_contact">
-</div>
+  <div class="form-group">
+    <label>Contact Number of your Current or Present Employer or Company</label>
+    <input type="text" class="form-control" name="current_employer_contact">
+  </div>
 
-<!-- Initial Gross Monthly Earning in First Job -->
-<div class="form-group">
-  <label>What is your <em>initial gross monthly earning</em> in your <em>first job</em> after college?</label>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="below_5000"><label class="form-check-label">Below 5,000.00 pesos</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="5000_to_9999"><label class="form-check-label">5,000.00 to less than 10,000.00 pesos</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="10000_to_14999"><label class="form-check-label">10,000.00 to less than 15,000.00 pesos</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="15000_to_19999"><label class="form-check-label">15,000.00 to less than 20,000.00 pesos</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="20000_to_24999"><label class="form-check-label">20,000.00 to less than 25,000.00 pesos</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="25000_above"><label class="form-check-label">25,000.00 pesos and above</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="not_applicable"><label class="form-check-label">Not Applicable</label></div>
-</div>
+  <div class="form-group">
+    <label>What is your <em>initial gross monthly earning</em> in your <em>first job</em> after college?</label>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="below_5000"><label class="form-check-label">Below 5,000.00 pesos</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="5000_to_9999"><label class="form-check-label">5,000.00 to less than 10,000.00 pesos</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="10000_to_14999"><label class="form-check-label">10,000.00 to less than 15,000.00 pesos</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="15000_to_19999"><label class="form-check-label">15,000.00 to less than 20,000.00 pesos</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="20000_to_24999"><label class="form-check-label">20,000.00 to less than 25,000.00 pesos</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="25000_above"><label class="form-check-label">25,000.00 pesos and above</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="initial_salary" value="not_applicable"><label class="form-check-label">Not Applicable</label></div>
+  </div>
 
-<!-- Curriculum Relevance -->
-<div class="form-group">
-  <label>Was the <em>curriculum</em> you had in college <em>relevant</em> to your <em>first job</em>?</label>
-  <div class="form-check"><input class="form-check-input" type="radio" name="curriculum_relevance" value="yes"><label class="form-check-label">Yes</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="curriculum_relevance" value="no"><label class="form-check-label">No</label></div>
-  <div class="form-check"><input class="form-check-input" type="radio" name="curriculum_relevance" value="na"><label class="form-check-label">Not Applicable</label></div>
-</div>
+  <div class="form-group">
+    <label>Was the <em>curriculum</em> you had in college <em>relevant</em> to your <em>first job</em>?</label>
+    <div class="form-check"><input class="form-check-input" type="radio" name="curriculum_relevance" value="yes"><label class="form-check-label">Yes</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="curriculum_relevance" value="no"><label class="form-check-label">No</label></div>
+    <div class="form-check"><input class="form-check-input" type="radio" name="curriculum_relevance" value="na"><label class="form-check-label">Not Applicable</label></div>
+  </div>
 
-<!-- Competencies Learned in College -->
-<div class="form-group">
-  <label>If your answer on the previous question is YES, what <em>competencies learned in college</em> did you find very useful in your <em>first job</em>? You may check more than one answer.</label>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="communication"><label class="form-check-label">Communication skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="human_relation"><label class="form-check-label">Human Relation skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="entrepreneurial"><label class="form-check-label">Entrepreneurial skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="it_skills"><label class="form-check-label">Information Technology skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="problem_solving"><label class="form-check-label">Problem-solving skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="critical_thinking"><label class="form-check-label">Critical Thinking skills</label></div>
-  <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="none"><label class="form-check-label">None of the above</label></div>
-</div>
+  <div class="form-group">
+    <label>If your answer on the previous question is YES, what <em>competencies learned in college</em> did you find very useful in your <em>first job</em>? You may check more than one answer.</label>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="communication"><label class="form-check-label">Communication skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="human_relation"><label class="form-check-label">Human Relation skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="entrepreneurial"><label class="form-check-label">Entrepreneurial skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="it_skills"><label class="form-check-label">Information Technology skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="problem_solving"><label class="form-check-label">Problem-solving skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="critical_thinking"><label class="form-check-label">Critical Thinking skills</label></div>
+    <div class="form-check"><input class="form-check-input" type="checkbox" name="college_competencies[]" value="none"><label class="form-check-label">None of the above</label></div>
+  </div>
 
-<!-- Other Skills Not Mentioned -->
-<div class="form-group">
-  <label>If your answer on the previous question is <em>none of the above</em>, kindly specify other skills not mentioned.</label>
-  <input type="text" class="form-control" name="other_skills_specified">
+  <div class="form-group">
+    <label>If your answer on the previous question is <em>none of the above</em>, kindly specify other skills not mentioned.</label>
+    <input type="text" class="form-control" name="other_skills_specified">
+  </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const employmentStatus = document.getElementById('employment_status');
+  const unemployedSection = document.getElementById('unemployed_section');
+  const employedSection = document.getElementById('employed_section');
 
+  function toggleSections() {
+    const status = employmentStatus.value;
+
+    if (status === 'yes') {
+      employedSection.style.display = 'block';
+      unemployedSection.style.display = 'none';
+    } else if (status === 'no' || status === 'never_employed') {
+      employedSection.style.display = 'none';
+      unemployedSection.style.display = 'block';
+    } else {
+      // For blank or any other unrecognized value
+      employedSection.style.display = 'none';
+      unemployedSection.style.display = 'none';
+    }
+  }
+
+  toggleSections(); // Initial check
+  employmentStatus.addEventListener('change', toggleSections);
+});
+</script>
