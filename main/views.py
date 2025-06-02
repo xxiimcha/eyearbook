@@ -134,13 +134,18 @@ def login_view(request):
             messages.error(request, "Invalid email or password")
 
     return render(request, "main/login.html")
+
+
 def form_page(request, account_id=None):
     batch_records = Batch.objects.values("id", "from_year", "to_year", "batch_type").distinct()
     batch_data = {}
 
     for record in batch_records:
         year_range = f"{record['from_year']} - {record['to_year']}"
-        batch_data.setdefault(year_range, []).append({"id": record["id"], "type": record["batch_type"]})
+        batch_data.setdefault(year_range, []).append({
+            "id": record["id"],
+            "type": record["batch_type"]
+        })
 
     graduate_data = None
     graduate = None
@@ -153,7 +158,6 @@ def form_page(request, account_id=None):
         batch_display = f"{graduate.batch.from_year} - {graduate.batch.to_year}"
         full_name_combined = f"{graduate.first_name} {graduate.middle_name or ''} {graduate.last_name}".strip()
 
-        # Check if form already submitted by full_name and contact number (as fallback instead of birthday)
         submitted = GraduateTracerForm.objects.filter(
             full_name__icontains=full_name_combined,
             mobile_number=graduate.contact
@@ -218,7 +222,8 @@ def form_page(request, account_id=None):
             curriculum_relevance=data.get('curriculum_relevance'),
             college_competencies=','.join(data.getlist('college_competencies[]')),
             other_skills_specified=data.get('other_skills_specified'),
-            data_privacy=bool(data.get('data_privacy'))
+            data_privacy=bool(data.get('data_privacy')),
+            batch_type=data.get('batch_type')
         )
 
         submitted = True
